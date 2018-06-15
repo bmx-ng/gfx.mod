@@ -1,2 +1,3 @@
-# bgfx.mod
-BlitzMax wrapper for bgfx rendering library
+# gfx.mod
+bgfx rendering library backend for BlitzMax
+

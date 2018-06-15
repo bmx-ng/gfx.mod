@@ -1,0 +1,3 @@
+SuperStrict
+
+Framework bgfx.bgfx
