@@ -1,0 +1,8 @@
+*.a
+*.i
+*.i2
+*.bak
+*.DS_Store
+.bmx
+commands.html
+.idea

@@ -192,3 +192,4 @@ End Rem
 Function mtxTranspose(result:Float Ptr, a:Float Ptr)
 	bmx_bx_mtxTranspose(result, a)
 End Function
+

@@ -24,24 +24,34 @@
 '
 SuperStrict
 
-Import "bimg/include/*.h"
-Import "bimg/3rdparty/*.h"
-Import "bimg/3rdparty/iqa/include/*.h"
-Import "../bx.mod/bx/include/*.h"
+Import gfx.bimg
+Import gfx.bxstream
 
-?macos
-Import "../bx.mod/bx/include/compat/osx/*.h"
-?win32
-Import "../bx.mod/bx/include/compat/mingw/*.h"
-?
+Import "source.bmx"
 
-Import "bimg/src/image.cpp"
-Import "bimg/src/image_gnf.cpp"
+Extern
 
-Import "bimg/3rdparty/iqa/source/convolve.c"
-Import "bimg/3rdparty/iqa/source/decimate.c"
-Import "bimg/3rdparty/iqa/source/math_utils.c"
-Import "bimg/3rdparty/iqa/source/mse.c"
-Import "bimg/3rdparty/iqa/source/ms_ssim.c"
-Import "bimg/3rdparty/iqa/source/psnr.c"
-Import "bimg/3rdparty/iqa/source/ssim.c"
+	Function bmx_bimg_options_new:Byte Ptr()
+	Function bmx_bimg_options_free(handle:Byte Ptr)
+	Function bmx_bimg_options_setMaxSize(handle:Byte Ptr, maxSize:Int)
+	Function bmx_bimg_options_setEdge(handle:Byte Ptr, edge:Float)
+	Function bmx_bimg_options_setFormat(handle:Byte Ptr, format:Int)
+	Function bmx_bimg_options_setQuality(handle:Byte Ptr, quality:Int)
+	Function bmx_bimg_options_setMips(handle:Byte Ptr, mips:Int)
+	Function bmx_bimg_options_setNormalMap(handle:Byte Ptr, normalMap:Int)
+	Function bmx_bimg_options_setEquirect(handle:Byte Ptr, equirect:Int)
+	Function bmx_bimg_options_setIqa(handle:Byte Ptr, iqa:Int)
+	Function bmx_bimg_options_setPma(handle:Byte Ptr, pma:Int)
+	Function bmx_bimg_options_setSdf(handle:Byte Ptr, sdf:Int)
+	Function bmx_bimg_options_setAlphaTest(handle:Byte Ptr, alphaTest:Int)
+	Function bmx_bimg_options_setOutputType(handle:Byte Ptr, outputType:Int)
+	
+	Function bmx_bimg_texturec_convert(iStream:Byte Ptr, oStream:Byte Ptr, options:Byte Ptr)
+
+
+End Extern
+
+Const OUTPUT_KTX:Int = 0
+Const OUTPUT_DDS:Int = 1
+Const OUTPUT_PNG:Int = 2
+Const OUTPUT_EXR:Int = 3

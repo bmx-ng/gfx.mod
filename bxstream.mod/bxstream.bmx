@@ -24,24 +24,61 @@
 '
 SuperStrict
 
-Import "bimg/include/*.h"
-Import "bimg/3rdparty/*.h"
-Import "bimg/3rdparty/iqa/include/*.h"
-Import "../bx.mod/bx/include/*.h"
+Module gfx.bxstream
 
+?linuxx86
+ModuleInfo "CC_OPTS: -mfpmath=sse -msse2 -std=c++0x"
+?linuxx64
+ModuleInfo "CC_OPTS: -mfpmath=sse -msse2 -std=c++0x"
 ?macos
-Import "../bx.mod/bx/include/compat/osx/*.h"
+ModuleInfo "CC_OPTS: -msse2"
 ?win32
-Import "../bx.mod/bx/include/compat/mingw/*.h"
+ModuleInfo "CC_OPTS: -mfpmath=sse -msse2 -std=c++0x"
+
+?raspberrypi
+ModuleInfo "CC_OPTS: -std=c++0x"
 ?
 
-Import "bimg/src/image.cpp"
-Import "bimg/src/image_gnf.cpp"
+ModuleInfo "CC_OPTS: -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS"
 
-Import "bimg/3rdparty/iqa/source/convolve.c"
-Import "bimg/3rdparty/iqa/source/decimate.c"
-Import "bimg/3rdparty/iqa/source/math_utils.c"
-Import "bimg/3rdparty/iqa/source/mse.c"
-Import "bimg/3rdparty/iqa/source/ms_ssim.c"
-Import "bimg/3rdparty/iqa/source/psnr.c"
-Import "bimg/3rdparty/iqa/source/ssim.c"
+
+Import "common.bmx"
+
+
+Type TBxStreamWrapper
+
+	Field bxStreamPtr:Byte Ptr
+
+	Method Create:TBxStreamWrapper(stream:TStream)
+		bxStreamPtr = bmx_bx_stream_new(stream)
+		Return Self
+	End Method
+	
+	Method Free()
+		If bxStreamPtr Then
+			bmx_bx_stream_free(bxStreamPtr)
+			bxStreamPtr = Null
+		End If
+	End Method
+	
+	Method Delete()
+		Free()
+	End Method
+
+	Function _seek:Long(stream:TStream, offset:Long, whence:Int) { nomangle }
+		Return stream.Seek(offset, whence)
+	End Function
+
+	Function _write:Int(stream:TStream, data:Byte Ptr, size:Int) { nomangle }
+		Return stream.Write(data, size)
+	End Function
+	
+	Function _read:Int(stream:TStream, data:Byte Ptr, size:Int) { nomangle }
+		Return stream.Read(data, size)
+	End Function
+	
+	Function _close(stream:TStream) { nomangle }
+		stream.Close()
+	End Function
+
+End Type

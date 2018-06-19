@@ -24,24 +24,13 @@
 '
 SuperStrict
 
-Import "bimg/include/*.h"
-Import "bimg/3rdparty/*.h"
-Import "bimg/3rdparty/iqa/include/*.h"
-Import "../bx.mod/bx/include/*.h"
+Import gfx.bx
+Import brl.stream
 
-?macos
-Import "../bx.mod/bx/include/compat/osx/*.h"
-?win32
-Import "../bx.mod/bx/include/compat/mingw/*.h"
-?
+Import "source.bmx"
 
-Import "bimg/src/image.cpp"
-Import "bimg/src/image_gnf.cpp"
 
-Import "bimg/3rdparty/iqa/source/convolve.c"
-Import "bimg/3rdparty/iqa/source/decimate.c"
-Import "bimg/3rdparty/iqa/source/math_utils.c"
-Import "bimg/3rdparty/iqa/source/mse.c"
-Import "bimg/3rdparty/iqa/source/ms_ssim.c"
-Import "bimg/3rdparty/iqa/source/psnr.c"
-Import "bimg/3rdparty/iqa/source/ssim.c"
+Extern
+	Function bmx_bx_stream_new:Byte Ptr(stream:TStream)
+	Function bmx_bx_stream_free(handle:Byte Ptr)
+End Extern
