@@ -39,15 +39,12 @@ clean: ## Clean all intermediate files.
 	@mkdir .build
 
 projgen: ## Generate project files for all configurations.
-	$(GENIE) --with-tools                     vs2012
-	$(GENIE) --with-tools                     vs2013
-	$(GENIE) --with-tools                     vs2015
 	$(GENIE) --with-tools                     vs2017
 	$(GENIE) --with-tools --gcc=mingw-gcc     gmake
 	$(GENIE) --with-tools --gcc=linux-gcc     gmake
 	$(GENIE) --with-tools --gcc=osx           gmake
-	$(GENIE) --with-tools --xcode=osx         xcode4
-	$(GENIE) --with-tools --xcode=ios         xcode4
+	$(GENIE) --with-tools --xcode=osx         xcode8
+	$(GENIE) --with-tools --xcode=ios         xcode8
 	$(GENIE)              --gcc=freebsd       gmake
 	$(GENIE)                                --gcc=android-arm     gmake
 	$(GENIE)                                --gcc=android-mips    gmake
@@ -134,42 +131,6 @@ mingw-clang-debug64: .build/projects/gmake-mingw-clang ## Build - MinGW Clang x6
 mingw-clang-release64: .build/projects/gmake-mingw-clang ## Build - MinGW Clang x64 Release
 	$(MAKE) -R -C .build/projects/gmake-mingw-clang config=release64
 mingw-clang: mingw-clang-debug32 mingw-clang-release32 mingw-clang-debug64 mingw-clang-release64 ## Build - MinGW Clang x86/x64 Debug and Release
-
-.build/projects/vs2012:
-	$(GENIE) --with-tools vs2012
-vs2012-debug32: .build/projects/vs2012 ## Build - VS2012 x86 Debug
-	devenv .build/projects/vs2012/bimg.sln /Build "Debug|Win32"
-vs2012-release32: .build/projects/vs2012 ## Build - VS2012 x86 Release
-	devenv .build/projects/vs2012/bimg.sln /Build "Release|Win32"
-vs2012-debug64: .build/projects/vs2012 ## Build - VS2012 x64 Debug
-	devenv .build/projects/vs2012/bimg.sln /Build "Debug|x64"
-vs2012-release64: .build/projects/vs2012 ## Build - VS2012 x64 Release
-	devenv .build/projects/vs2012/bimg.sln /Build "Release|x64"
-vs2012: vs2012-debug32 vs2012-release32 vs2012-debug64 vs2012-release64 ## Build - VS2012 x86/x64 Debug and Release
-
-.build/projects/vs2013:
-	$(GENIE) --with-tools vs2013
-vs2013-debug32: .build/projects/vs2013 ## Build - VS2013 x86 Debug
-	devenv .build/projects/vs2013/bimg.sln /Build "Debug|Win32"
-vs2013-release32: .build/projects/vs2013 ## Build - VS2013 x86 Release
-	devenv .build/projects/vs2013/bimg.sln /Build "Release|Win32"
-vs2013-debug64: .build/projects/vs2013 ## Build - VS2013 x64 Debug
-	devenv .build/projects/vs2013/bimg.sln /Build "Debug|x64"
-vs2013-release64: .build/projects/vs2013 ## Build - VS2013 x64 Release
-	devenv .build/projects/vs2013/bimg.sln /Build "Release|x64"
-vs2013: vs2013-debug32 vs2013-release32 vs2013-debug64 vs2013-release64 ## Build - VS2013 x86/x64 Debug and Release
-
-.build/projects/vs2015:
-	$(GENIE) --with-tools vs2015
-vs2015-debug32: .build/projects/vs2015 ## Build - VS2015 x86 Debug
-	devenv .build/projects/vs2015/bimg.sln /Build "Debug|Win32"
-vs2015-release32: .build/projects/vs2015 ## Build - VS2015 x86 Release
-	devenv .build/projects/vs2015/bimg.sln /Build "Release|Win32"
-vs2015-debug64: .build/projects/vs2015 ## Build - VS2015 x64 Debug
-	devenv .build/projects/vs2015/bimg.sln /Build "Debug|x64"
-vs2015-release64: .build/projects/vs2015 ## Build - VS2015 x64 Release
-	devenv .build/projects/vs2015/bimg.sln /Build "Release|x64"
-vs2015: vs2015-debug32 vs2015-release32 vs2015-debug64 vs2015-release64 ## Build - VS2015 x86/x64 Debug and Release
 
 .build/projects/vs2017:
 	$(GENIE) --with-tools vs2017
@@ -308,7 +269,7 @@ texturev: .build/projects/$(BUILD_PROJECT_DIR) ## Build texturev tool.
 	$(SILENT) $(MAKE) -C .build/projects/$(BUILD_PROJECT_DIR) texturev config=$(BUILD_TOOLS_CONFIG)
 	$(SILENT) cp .build/$(BUILD_OUTPUT_DIR)/bin/texturev$(BUILD_TOOLS_SUFFIX)$(EXE) tools/bin/$(OS)/texturev$(EXE)
 
-tools: geometryc shaderc texturec texturev ## Build tools.
+tools: texturec ## Build tools.
 
 clean-tools: ## Clean tools projects.
 	-$(SILENT) rm -r .build/projects/$(BUILD_PROJECT_DIR)
