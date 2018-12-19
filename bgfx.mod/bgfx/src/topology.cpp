@@ -37,6 +37,37 @@ namespace bgfx
 		return _numIndices;
 	}
 
+	inline bool isEven(uint32_t _num)
+	{
+		return 0 == (_num & 1);
+	}
+
+	template<typename IndexT>
+	static uint32_t topologyConvertTriStripFlipWinding(void* _dst, uint32_t _dstSize, const IndexT* _indices, uint32_t _numIndices)
+	{
+		const uint32_t numIndices = isEven(_numIndices) ? _numIndices + 1 : _numIndices;
+
+		if (NULL != _dst)
+		{
+			return numIndices;
+		}
+
+		IndexT* dst = (IndexT*)_dst;
+		IndexT* end = &dst[_dstSize/sizeof(IndexT)];
+
+		if (isEven(_numIndices) )
+		{
+			*dst++ = _indices[_numIndices-1];
+		}
+
+		for (uint32_t ii = 1; ii <= _numIndices && dst < end; ++ii)
+		{
+			*dst++ = _indices[_numIndices - ii];
+		}
+
+		return numIndices;
+	}
+
 	template<typename IndexT, typename SortT>
 	static uint32_t topologyConvertTriListToLineList(void* _dst, uint32_t _dstSize, const IndexT* _indices, uint32_t _numIndices, IndexT* _temp, SortT* _tempSort)
 	{
@@ -47,9 +78,9 @@ namespace bgfx
 			const IndexT* tri = &_indices[ii];
 			IndexT i0 = tri[0], i1 = tri[1], i2 = tri[2];
 
-			if (i0 > i1) { bx::xchg(i0, i1); }
-			if (i1 > i2) { bx::xchg(i1, i2); }
-			if (i0 > i1) { bx::xchg(i0, i1); }
+			if (i0 > i1) { bx::swap(i0, i1); }
+			if (i1 > i2) { bx::swap(i1, i2); }
+			if (i0 > i1) { bx::swap(i0, i1); }
 			BX_CHECK(i0 < i1 && i1 < i2, "");
 
 			dst[1] = i0; dst[0] = i1;
@@ -195,6 +226,14 @@ namespace bgfx
 
 			return topologyConvertTriListFlipWinding(_dst, _dstSize, (const uint16_t*)_indices, _numIndices);
 
+		case TopologyConvert::TriStripFlipWinding:
+			if (_index32)
+			{
+				return topologyConvertTriStripFlipWinding(_dst, _dstSize, (const uint32_t*)_indices, _numIndices);
+			}
+
+			return topologyConvertTriStripFlipWinding(_dst, _dstSize, (const uint16_t*)_indices, _numIndices);
+
 		case TopologyConvert::TriListToLineList:
 			if (NULL == _allocator)
 			{
@@ -238,22 +277,21 @@ namespace bgfx
 		return (_a + _b + _c) * 1.0f/3.0f;
 	}
 
-	const float* vertexPos(const void* _vertices, uint32_t _stride, uint32_t _index)
+	const bx::Vec3 vertexPos(const void* _vertices, uint32_t _stride, uint32_t _index)
 	{
 		const uint8_t* vertices = (const uint8_t*)_vertices;
-		return (const float*)&vertices[_index*_stride];
+		return bx::load(&vertices[_index*_stride]);
 	}
 
 	inline float distanceDir(const float* __restrict _dir, const void* __restrict _vertices, uint32_t _stride, uint32_t _index)
 	{
-		return bx::vec3Dot(vertexPos(_vertices, _stride, _index), _dir);
+		return bx::dot(vertexPos(_vertices, _stride, _index), bx::load(_dir) );
 	}
 
 	inline float distancePos(const float* __restrict _pos, const void* __restrict _vertices, uint32_t _stride, uint32_t _index)
 	{
-		float tmp[3];
-		bx::vec3Sub(tmp, _pos, vertexPos(_vertices, _stride, _index) );
-		return bx::sqrt(bx::vec3Dot(tmp, tmp) );
+		const bx::Vec3 tmp = bx::sub(bx::load(_pos), vertexPos(_vertices, _stride, _index) );
+		return bx::sqrt(bx::dot(tmp, tmp) );
 	}
 
 	typedef float (*KeyFn)(float, float, float);

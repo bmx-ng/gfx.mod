@@ -38,16 +38,16 @@ ModuleInfo "History: 1.00"
 ModuleInfo "History: Initial Release."
 
 ?linuxx86
-ModuleInfo "CC_OPTS: -mfpmath=sse -msse2 -std=c++0x"
+ModuleInfo "CC_OPTS: -mfpmath=sse -msse2 -std=c++14"
 ?linuxx64
-ModuleInfo "CC_OPTS: -mfpmath=sse -msse2 -std=c++0x"
+ModuleInfo "CC_OPTS: -mfpmath=sse -msse2 -std=c++14"
 ?macos
 ModuleInfo "CC_OPTS: -msse2"
 ?win32
-ModuleInfo "CC_OPTS: -mfpmath=sse -msse2 -std=c++0x"
+ModuleInfo "CC_OPTS: -mfpmath=sse -msse2 -std=c++14"
 
 ?raspberrypi
-ModuleInfo "CC_OPTS: -std=c++0x"
+ModuleInfo "CC_OPTS: -std=c++14"
 ?
 
 ModuleInfo "CC_OPTS: -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS"
@@ -73,8 +73,8 @@ Type TBGFX
 	bbdoc: Resets graphic settings and back-buffer size.
 	about: This call doesn't actually change window size, it just resizes back-buffer. Windowing code has to change window size.
 	End Rem
-	Function Reset(width:Int, height:Int, flags:Int = BGFX_RESET_NONE)
-		bmx_bgfx_reset(width, height, flags)
+	Function Reset(width:Int, height:Int, flags:Int = BGFX_RESET_NONE, format:Int = BGFX_TEXTURE_FORMAT_COUNT)
+		bmx_bgfx_reset(width, height, flags, format)
 	End Function
 
 '	Rem
@@ -102,8 +102,8 @@ Type TBGFX
 		bmx_bgfx_dbg_text_clear(attr, small)
 	End Function
 	
-	Function DebugTextPrint(x:Short, y:Short, attr:Byte, text:String)
-		bmx_bgfx_dbg_text_printf(x, y, attr, text)
+	Function DebugTextPrint(x:Short, y:Short, attr:Byte, Text:String)
+		bmx_bgfx_dbg_text_printf(x, y, attr, Text)
 	End Function
 	
 	Function DebugTextImage(x:Short, y:Short, width:Short, height:Short, data:Byte Ptr, pitch:Short)

@@ -33,7 +33,7 @@
 int bmx_bgfx_init(int width, int height, int rendererType);
 
 uint32_t bmx_bgfx_frame(int capture);
-void bmx_bgfx_reset(uint32_t width, uint32_t height, uint32_t flags);
+void bmx_bgfx_reset(uint32_t width, uint32_t height, uint32_t flags, int format);
 void bmx_bgfx_shutdown();
 
 //void bmx_bgfx_set_clear_color(int index, int r, int g, int b, int a);
@@ -207,7 +207,7 @@ int bmx_bgfx_init(int width, int height, int rendererType) {
 		return 0;
 	}
 
-	bgfx_reset(width, height, BGFX_RESET_VSYNC);	
+	bgfx_reset(width, height, BGFX_RESET_VSYNC, BGFX_TEXTURE_FORMAT_COUNT);	
 
 	return 1;
 }
@@ -216,8 +216,8 @@ uint32_t bmx_bgfx_frame(int capture) {
 	return bgfx_frame(capture);
 }
 
-void bmx_bgfx_reset(uint32_t width, uint32_t height, uint32_t flags) {
-	bgfx_reset(width, height, flags);
+void bmx_bgfx_reset(uint32_t width, uint32_t height, uint32_t flags, int format) {
+	bgfx_reset(width, height, flags, format);
 }
 
 void bmx_bgfx_shutdown() {
@@ -345,7 +345,8 @@ uint16_t bmx_bgfx_get_shader_uniforms(uint16_t shader, uint16_t * uniforms, uint
 
 void bmx_bgfx_set_shader_name(uint16_t shader, BBString * name) {
 	char * n = bbStringToUTF8String(name);
-	bgfx_set_shader_name(*(bgfx_shader_handle_t*)(&shader), n);
+	int len = strlen(n);
+	bgfx_set_shader_name(*(bgfx_shader_handle_t*)(&shader), n, len);
 	bbMemFree(n);
 }
 

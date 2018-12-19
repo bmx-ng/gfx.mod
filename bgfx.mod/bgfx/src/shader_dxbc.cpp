@@ -147,7 +147,7 @@ namespace bgfx
 		{ 5, 0 }, // GATHER4_C
 		{ 5, 0 }, // GATHER4_PO
 		{ 0, 0 }, // GATHER4_PO_C
-		{ 0, 0 }, // RCP
+		{ 2, 0 }, // RCP
 		{ 0, 0 }, // F32TOF16
 		{ 0, 0 }, // F16TOF32
 		{ 0, 0 }, // UADDC
@@ -156,8 +156,8 @@ namespace bgfx
 		{ 0, 0 }, // FIRSTBIT_HI
 		{ 0, 0 }, // FIRSTBIT_LO
 		{ 0, 0 }, // FIRSTBIT_SHI
-		{ 0, 0 }, // UBFE
-		{ 0, 0 }, // IBFE
+		{ 4, 0 }, // UBFE
+		{ 4, 0 }, // IBFE
 		{ 5, 0 }, // BFI
 		{ 0, 0 }, // BFREV
 		{ 5, 0 }, // SWAPC
