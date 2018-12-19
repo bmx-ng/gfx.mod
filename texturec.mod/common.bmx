@@ -55,3 +55,4 @@ Const OUTPUT_KTX:Int = 0
 Const OUTPUT_DDS:Int = 1
 Const OUTPUT_PNG:Int = 2
 Const OUTPUT_EXR:Int = 3
+Const OUTPUT_HDR:Int = 4

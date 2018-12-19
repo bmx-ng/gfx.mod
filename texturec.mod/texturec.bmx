@@ -27,21 +27,21 @@ SuperStrict
 Rem
 bbdoc: BGFX Texture Compiler
 End Rem
-Module gfx.texturec
+Module gfx.TextureC
 
 ?linuxx86
-ModuleInfo "CC_OPTS: -mfpmath=sse -msse2 -std=c++0x"
+ModuleInfo "CC_OPTS: -mfpmath=sse -msse2 -std=c++14"
 ?linuxx64
-ModuleInfo "CC_OPTS: -mfpmath=sse -msse2 -std=c++0x"
+ModuleInfo "CC_OPTS: -mfpmath=sse -msse2 -std=c++14"
 ?macos
 ModuleInfo "CC_OPTS: -msse2"
 ?win32
-ModuleInfo "CC_OPTS: -mfpmath=sse -msse2 -std=c++0x"
+ModuleInfo "CC_OPTS: -mfpmath=sse -msse2 -std=c++14"
 
 ModuleInfo "CC_OPTS: -D__STDC_LIMIT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_CONSTANT_MACROS"
 
 ?raspberrypi
-ModuleInfo "CC_OPTS: -std=c++0x"
+ModuleInfo "CC_OPTS: -std=c++14"
 ?
 
 Import "common.bmx"
