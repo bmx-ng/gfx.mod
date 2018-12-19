@@ -59,12 +59,11 @@ void Settings::load(const void* _data, uint32_t _len)
 	}
 	else
 	{
-		BX_UNUSED(_len);
-		m_ini = ini_load( (const char*)_data, m_allocator);
+		m_ini = ini_load( (const char*)_data, _len, m_allocator);
 	}
 }
 
-const char* Settings::get(const StringView& _name) const
+StringView Settings::get(const StringView& _name) const
 {
 	ini_t* ini = INI_T(m_ini);
 
@@ -85,7 +84,7 @@ const char* Settings::get(const StringView& _name) const
 	int32_t property = ini_find_property(ini, section, fileName.getPtr(), fileName.getLength() );
 	if (INI_NOT_FOUND == property)
 	{
-		return NULL;
+		return StringView();
 	}
 
 	return ini_property_value(ini, section, property);

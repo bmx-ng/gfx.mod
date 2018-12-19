@@ -8,7 +8,6 @@
 #include <bx/string.h>       // isPrint
 #include <bx/readerwriter.h> // WriterI
 #include <inttypes.h>        // PRIx*
-#include <iostream>
 
 #if BX_CRT_NONE
 #	include "crt0.h"
@@ -63,7 +62,6 @@ namespace bx
 	|| BX_PLATFORM_WINRT   \
 	|| BX_PLATFORM_XBOXONE
 		OutputDebugStringA(_out);
-		//std::cout << _out << std::endl;
 #elif  BX_PLATFORM_IOS \
 	|| BX_PLATFORM_OSX
 #	if defined(__OBJC__)

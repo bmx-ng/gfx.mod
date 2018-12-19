@@ -50,7 +50,6 @@ function toolchain(_buildDir, _libDir)
 		description = "Choose GCC flavor",
 		allowed = {
 			{ "android-arm",     "Android - ARM"              },
-			{ "android-mips",    "Android - MIPS"             },
 			{ "android-x86",     "Android - x86"              },
 			{ "asmjs",           "Emscripten/asm.js"          },
 			{ "freebsd",         "FreeBSD"                    },
@@ -194,7 +193,6 @@ function toolchain(_buildDir, _libDir)
 	end
 
 	flags {
-		"Cpp11",
 		"ExtraWarnings",
 	}
 
@@ -220,25 +218,12 @@ function toolchain(_buildDir, _libDir)
 			premake.gcc.llvm = true
 			location (path.join(_buildDir, "projects", _ACTION .. "-android-arm"))
 
-		elseif "android-mips" == _OPTIONS["gcc"] then
-
-			if not os.getenv("ANDROID_NDK_MIPS")
-			or not os.getenv("ANDROID_NDK_CLANG")
-			or not os.getenv("ANDROID_NDK_ROOT") then
-				print("Set ANDROID_NDK_CLANG, ANDROID_NDK_ARM, and ANDROID_NDK_ROOT environment variables.")
-			end
-
-			premake.gcc.cc   = "$(ANDROID_NDK_CLANG)/bin/clang"
-			premake.gcc.cxx  = "$(ANDROID_NDK_CLANG)/bin/clang++"
-			premake.gcc.llvm = true
-			location (path.join(_buildDir, "projects", _ACTION .. "-android-mips"))
-
 		elseif "android-x86" == _OPTIONS["gcc"] then
 
 			if not os.getenv("ANDROID_NDK_X86")
 			or not os.getenv("ANDROID_NDK_CLANG")
 			or not os.getenv("ANDROID_NDK_ROOT") then
-				print("Set ANDROID_NDK_CLANG, ANDROID_NDK_ARM, and ANDROID_NDK_ROOT environment variables.")
+				print("Set ANDROID_NDK_CLANG, ANDROID_NDK_X86, and ANDROID_NDK_ROOT environment variables.")
 			end
 
 			premake.gcc.cc   = "$(ANDROID_NDK_CLANG)/bin/clang"
@@ -396,9 +381,9 @@ function toolchain(_buildDir, _libDir)
 			location (path.join(_buildDir, "projects", _ACTION .. "-rpi"))
 
 		elseif "riscv" == _OPTIONS["gcc"] then
-			premake.gcc.cc  = "$(FREEDOM_E_SDK)/toolchain/bin/riscv32-unknown-elf-gcc"
-			premake.gcc.cxx = "$(FREEDOM_E_SDK)/toolchain/bin/riscv32-unknown-elf-g++"
-			premake.gcc.ar  = "$(FREEDOM_E_SDK)/toolchain/bin/riscv32-unknown-elf-ar"
+			premake.gcc.cc  = "$(FREEDOM_E_SDK)/work/build/riscv-gnu-toolchain/riscv64-unknown-elf/prefix/bin/riscv64-unknown-elf-gcc"
+			premake.gcc.cxx = "$(FREEDOM_E_SDK)/work/build/riscv-gnu-toolchain/riscv64-unknown-elf/prefix/bin/riscv64-unknown-elf-g++"
+			premake.gcc.ar  = "$(FREEDOM_E_SDK)/work/build/riscv-gnu-toolchain/riscv64-unknown-elf/prefix/bin/riscv64-unknown-elf-ar"
 			location (path.join(_buildDir, "projects", _ACTION .. "-riscv"))
 
 		end
@@ -465,7 +450,9 @@ function toolchain(_buildDir, _libDir)
 
 		end
 
-	elseif _ACTION == "xcode4" then
+	elseif _ACTION == "xcode4"
+		or _ACTION == "xcode8"
+		or _ACTION == "xcode9" then
 		local action = premake.action.current()
 		local str_or = function(str, def)
 			return #str > 0 and str or def
@@ -549,6 +536,7 @@ function toolchain(_buildDir, _libDir)
 			"_WIN32",
 			"_HAS_EXCEPTIONS=0",
 			"_HAS_ITERATOR_DEBUGGING=0",
+			"_ITERATOR_DEBUG_LEVEL=0",
 			"_SCL_SECURE=0",
 			"_SECURE_SCL=0",
 			"_SCL_SECURE_NO_WARNINGS",
@@ -645,6 +633,9 @@ function toolchain(_buildDir, _libDir)
 			"-Wunused-value",
 			"-Wundef",
 		}
+		buildoptions_cpp {
+			"-std=c++14",
+		}
 		linkoptions {
 			"-Wl,--gc-sections",
 			"-static",
@@ -725,12 +716,14 @@ function toolchain(_buildDir, _libDir)
 --			"-Wduplicated-branches",
 --			"-Wduplicated-cond",
 --			"-Wjump-misses-init",
-			"-Wlogical-op",
 			"-Wshadow",
 --			"-Wnull-dereference",
 			"-Wunused-value",
 			"-Wundef",
 --			"-Wuseless-cast",
+		}
+		buildoptions_cpp {
+			"-std=c++14",
 		}
 		links {
 			"rt",
@@ -739,6 +732,11 @@ function toolchain(_buildDir, _libDir)
 		linkoptions {
 			"-Wl,--gc-sections",
 			"-Wl,--as-needed",
+		}
+
+	configuration { "linux-gcc*" }
+		buildoptions {
+			"-Wlogical-op",
 		}
 
 	configuration { "linux-gcc*", "x32" }
@@ -781,6 +779,9 @@ function toolchain(_buildDir, _libDir)
 			"-Wunused-value",
 			"-Wundef",
 		}
+		buildoptions_cpp {
+			"-std=c++14",
+		}
 		links {
 			"rt",
 			"dl",
@@ -797,6 +798,9 @@ function toolchain(_buildDir, _libDir)
 			"-Wunused-value",
 			"-Wundef",
 		}
+		buildoptions_cpp {
+			"-std=c++14",
+		}
 		links {
 			"rt",
 			"dl",
@@ -812,6 +816,7 @@ function toolchain(_buildDir, _libDir)
 		}
 		includedirs {
 			"$(ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/include",
+			"${ANDROID_NDK_ROOT}/sysroot/usr/include",
 			"$(ANDROID_NDK_ROOT)/sources/android/native_app_glue",
 		}
 		linkoptions {
@@ -823,7 +828,7 @@ function toolchain(_buildDir, _libDir)
 			"m",
 			"android",
 			"log",
-			"c++",
+			"c++_shared",
 			"gcc",
 		}
 		buildoptions {
@@ -834,6 +839,9 @@ function toolchain(_buildDir, _libDir)
 			"-ffunction-sections",
 			"-Wunused-value",
 			"-Wundef",
+		}
+		buildoptions_cpp {
+			"-std=c++14",
 		}
 		linkoptions {
 			"-no-canonical-prefixes",
@@ -852,6 +860,7 @@ function toolchain(_buildDir, _libDir)
 			"__STEAMLINK__=1", -- There is no special prefedined compiler symbol to detect SteamLink, faking it.
 		}
 		buildoptions {
+			"-std=c++14",
 			"-Wfatal-errors",
 			"-Wunused-value",
 			"-Wundef",
@@ -870,12 +879,10 @@ function toolchain(_buildDir, _libDir)
 		targetdir (path.join(_buildDir, "android-arm/bin"))
 		objdir (path.join(_buildDir, "android-arm/obj"))
 		libdirs {
-			path.join(_libDir, "lib/android-arm"),
 			"$(ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/armeabi-v7a",
 		}
 		includedirs {
-			"$(ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/armeabi-v7a/include",
-			"$(ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/include",
+			"$(ANDROID_NDK_ROOT)/sysroot/usr/include/arm-linux-androideabi",
 		}
 		buildoptions {
 			"-gcc-toolchain $(ANDROID_NDK_ARM)",
@@ -898,42 +905,14 @@ function toolchain(_buildDir, _libDir)
 			"-Wl,--fix-cortex-a8",
 		}
 
-	configuration { "android-mips" }
-		targetdir (path.join(_buildDir, "android-mips/bin"))
-		objdir (path.join(_buildDir, "android-mips/obj"))
-		libdirs {
-			path.join(_libDir, "lib/android-mips"),
-			"$(ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/mips",
-		}
-		includedirs {
-			"$(ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/mips/include",
-		}
-		buildoptions {
-			"-gcc-toolchain $(ANDROID_NDK_MIPS)",
-			"--sysroot=" .. path.join("$(ANDROID_NDK_ROOT)/platforms", androidPlatform, "arch-mips"),
-			"-target mipsel-none-linux-android",
-			"-mips32",
-			"-Wunused-value",
-			"-Wundef",
-		}
-		linkoptions {
-			"-gcc-toolchain $(ANDROID_NDK_MIPS)",
-			"--sysroot=" .. path.join("$(ANDROID_NDK_ROOT)/platforms", androidPlatform, "arch-mips"),
-			path.join("$(ANDROID_NDK_ROOT)/platforms", androidPlatform, "arch-mips/usr/lib/crtbegin_so.o"),
-			path.join("$(ANDROID_NDK_ROOT)/platforms", androidPlatform, "arch-mips/usr/lib/crtend_so.o"),
-			"-target mipsel-none-linux-android",
-			"-mips32",
-		}
-
 	configuration { "android-x86" }
 		targetdir (path.join(_buildDir, "android-x86/bin"))
 		objdir (path.join(_buildDir, "android-x86/obj"))
 		libdirs {
-			path.join(_libDir, "lib/android-x86"),
 			"$(ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/x86",
 		}
 		includedirs {
-			"$(ANDROID_NDK_ROOT)/sources/cxx-stl/llvm-libc++/libs/x86/include",
+			"$(ANDROID_NDK_ROOT)/sysroot/usr/include/x86_64-linux-android",
 		}
 		buildoptions {
 			"-gcc-toolchain $(ANDROID_NDK_X86)",
@@ -965,6 +944,9 @@ function toolchain(_buildDir, _libDir)
 			"-i\"system$(EMSCRIPTEN)/system/include/libc\"",
 			"-Wunused-value",
 			"-Wundef",
+		}
+		buildoptions_cpp {
+			"-std=c++14",
 		}
 
 	configuration { "freebsd" }
@@ -1023,6 +1005,12 @@ function toolchain(_buildDir, _libDir)
 		objdir (path.join(_buildDir, "osx_universal/bin"))
 
 	configuration { "osx" }
+		buildoptions_cpp {
+			"-std=c++14",
+		}
+		buildoptions_objcpp {
+			"-std=c++14",
+		}
 		buildoptions {
 			"-Wfatal-errors",
 			"-msse2",
@@ -1035,6 +1023,12 @@ function toolchain(_buildDir, _libDir)
 		linkoptions {
 			"-lc++",
 		}
+		buildoptions_cpp {
+			"-std=c++14",
+		}
+		buildoptions_objcpp {
+			"-std=c++14",
+		}
 		buildoptions {
 			"-Wfatal-errors",
 			"-Wunused-value",
@@ -1042,7 +1036,7 @@ function toolchain(_buildDir, _libDir)
 		}
 		includedirs { path.join(bxDir, "include/compat/ios") }
 
-	configuration { "xcode4", "ios*" }
+	configuration { "xcode*", "ios*" }
 		targetdir (path.join(_buildDir, "ios-arm/bin"))
 		objdir (path.join(_buildDir, "ios-arm/obj"))
 
@@ -1079,6 +1073,7 @@ function toolchain(_buildDir, _libDir)
 		buildoptions {
 			"-miphoneos-version-min=7.0",
 			"--sysroot=/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS" ..iosPlatform .. ".sdk",
+			"-fembed-bitcode",
 		}
 
 	configuration { "ios-simulator" }
@@ -1128,7 +1123,7 @@ function toolchain(_buildDir, _libDir)
 		}
 		includedirs { path.join(bxDir, "include/compat/ios") }
 
-	configuration { "xcode4", "tvos*" }
+	configuration { "xcode*", "tvos*" }
 		targetdir (path.join(_buildDir, "tvos-arm64/bin"))
 		objdir (path.join(_buildDir, "tvos-arm64/obj"))
 
@@ -1177,6 +1172,9 @@ function toolchain(_buildDir, _libDir)
 			"$(SCE_ORBIS_SDK_DIR)/target/include",
 			"$(SCE_ORBIS_SDK_DIR)/target/include_common",
 		}
+		buildoptions_cpp {
+			"-std=c++14",
+		}
 
 	configuration { "rpi" }
 		targetdir (path.join(_buildDir, "rpi/bin"))
@@ -1192,6 +1190,9 @@ function toolchain(_buildDir, _libDir)
 		buildoptions {
 			"-Wunused-value",
 			"-Wundef",
+		}
+		buildoptions_cpp {
+			"-std=c++14",
 		}
 		includedirs {
 			"/opt/vc/include",
@@ -1214,13 +1215,16 @@ function toolchain(_buildDir, _libDir)
 			"__MISC_VISIBLE",
 		}
 		includedirs {
-			"$(FREEDOM_E_SDK)/toolchain/riscv32-unknown-elf/include",
+			"$(FREEDOM_E_SDK)/work/build/riscv-gnu-toolchain/riscv64-unknown-elf/prefix/riscv64-unknown-elf/include",
 			path.join(bxDir, "include/compat/riscv"),
 		}
 		buildoptions {
 			"-Wunused-value",
 			"-Wundef",
-			"--sysroot=$(FREEDOM_E_SDK)/toolchain/riscv32-unknown-elf",
+			"--sysroot=$(FREEDOM_E_SDK)/work/build/riscv-gnu-toolchain/riscv64-unknown-elf/prefix/riscv64-unknown-elf",
+		}
+		buildoptions_cpp {
+			"-std=c++14",
 		}
 
 	configuration {} -- reset configuration
@@ -1234,12 +1238,6 @@ function strip()
 		postbuildcommands {
 			"$(SILENT) echo Stripping symbols.",
 			"$(SILENT) $(ANDROID_NDK_ARM)/bin/arm-linux-androideabi-strip -s \"$(TARGET)\""
-		}
-
-	configuration { "android-mips", "Release" }
-		postbuildcommands {
-			"$(SILENT) echo Stripping symbols.",
-			"$(SILENT) $(ANDROID_NDK_MIPS)/bin/mipsel-linux-android-strip -s \"$(TARGET)\""
 		}
 
 	configuration { "android-x86", "Release" }
@@ -1287,7 +1285,7 @@ function strip()
 	configuration { "riscv" }
 		postbuildcommands {
 			"$(SILENT) echo Stripping symbols.",
-			"$(SILENT) $(FREEDOM_E_SDK)/toolchain/bin/riscv32-unknown-elf-strip -s \"$(TARGET)\""
+			"$(SILENT) $(FREEDOM_E_SDK)/work/build/riscv-gnu-toolchain/riscv64-unknown-elf/prefix/bin/riscv64-unknown-elf-strip -s \"$(TARGET)\""
 		}
 
 	configuration {} -- reset configuration

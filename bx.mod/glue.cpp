@@ -75,7 +75,23 @@ void bmx_bx_mtxQuatTranslationHMD(float * result, float * quat, float * translat
 }
 
 void bmx_bx_mtxLookAt(float * result, float * eye, float * at, float * up) {
-	bx::mtxLookAt(result, eye, at, up);
+	bx::Vec3 vEye;
+	bx::Vec3 vAt;
+	bx::Vec3 vUp;
+	bx::mtxLookAt(result, vEye, vAt, vUp);
+	eye[0] = vEye.x;
+	eye[1] = vEye.y;
+	eye[2] = vEye.z;
+
+	at[0] = vAt.x;
+	at[1] = vAt.y;
+	at[2] = vAt.z;
+	
+	if (up) {
+		up[0] = vUp.x;
+		up[1] = vUp.y;
+		up[2] = vUp.z;
+	}
 }
 
 //void bmx_bx_mtxProjXYWH(float * result, float x, float y, float width, float height, float near, float far, int oglNdc) {
