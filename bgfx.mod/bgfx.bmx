@@ -1,4 +1,4 @@
-' Copyright (c) 2015-2018 Bruce A Henderson
+' Copyright (c) 2015-2019 Bruce A Henderson
 ' All rights reserved.
 ' 
 ' Redistribution and use in source and binary forms, with or without
@@ -31,8 +31,8 @@ Module gfx.bgfx
 
 ModuleInfo "Version: 1.00"
 ModuleInfo "License: BSD"
-ModuleInfo "Copyright: BGFX - 2011-2018 Branimir Karadzic. All rights reserved"
-ModuleInfo "Copyright: Wrapper - 2015-2018 Bruce A Henderson"
+ModuleInfo "Copyright: BGFX - 2011-2019 Branimir Karadzic. All rights reserved"
+ModuleInfo "Copyright: Wrapper - 2015-2019 Bruce A Henderson"
 
 ModuleInfo "History: 1.00"
 ModuleInfo "History: Initial Release."
@@ -65,16 +65,16 @@ bbdoc:
 End Rem
 Type TBGFX
 
-	Function Init:Int(width:Int, height:Int, rendererType:Int = BGFX_RENDERER_TYPE_COUNT)
-		Return bmx_bgfx_init(width, height, rendererType)
+	Function Init:Int(width:Int, height:Int, rendererType:EBGFXRenderType = EBGFXRenderType.COUNT, reset:Int = BGFX_RESET_VSYNC | BGFX_RESET_HIDPI, format:EBGFXTextureFormat = EBGFXTextureFormat.COUNT)
+		Return bmx_bgfx_init(width, height, rendererType.Ordinal(), reset, format.Ordinal())
 	End Function
 
 	Rem
 	bbdoc: Resets graphic settings and back-buffer size.
 	about: This call doesn't actually change window size, it just resizes back-buffer. Windowing code has to change window size.
 	End Rem
-	Function Reset(width:Int, height:Int, flags:Int = BGFX_RESET_NONE, format:Int = BGFX_TEXTURE_FORMAT_COUNT)
-		bmx_bgfx_reset(width, height, flags, format)
+	Function Reset(width:Int, height:Int, flags:Int = BGFX_RESET_NONE, format:EBGFXTextureFormat = EBGFXTextureFormat.COUNT)
+		bmx_bgfx_reset(width, height, flags, format.Ordinal())
 	End Function
 
 '	Rem
@@ -92,6 +92,10 @@ Type TBGFX
 	End Rem
 	Function Frame:Int(capture:Int = False)
 		Return bmx_bgfx_frame(capture)
+	End Function
+	
+	Function RenderFrame:Int(msecs:Int = -1)
+		Return bmx_bgfx_render_frame(msecs)
 	End Function
 	
 	Function SetDebug(debugFlags:Int)
@@ -141,8 +145,8 @@ Type TBGFX
 	bbdoc: Sets view rectangle.
 	about: Draw primitive outside view will be clipped.
 	End Rem
-	Function SetViewRectAuto(id:Short, x:Short, y:Short, ratio:Int)
-		bmx_bgfx_set_view_rect_auto(id, x, y, ratio)
+	Function SetViewRectRatio(id:Short, x:Short, y:Short, ratio:Int)
+		bmx_bgfx_set_view_rect_ratio(id, x, y, ratio)
 	End Function
 
 	Rem
@@ -778,9 +782,9 @@ Type TBGFXRenderBase Abstract
 	Method SetIndexBuffer(indexBuffer:Short, firstIndex:Int, numIndices:Int) Abstract
 	Method SetDynamicIndexBuffer(dynamicIndexBuffer:Short, firstIndex:Int, numIndices:Int) Abstract
 	Method SetTransientIndexBuffer(transientIndexBuffer:Short, firstIndex:Int, numIndices:Int) Abstract
-	Method SetVertexBuffer(stream:Byte, vertexBuffer:Short, startVertex:Int, numVertices:Int) Abstract
-	Method SetDynamicVertexBuffer(stream:Byte, dynamicVertexBuffer:Short, startVertex:Int, numVertices:Int) Abstract
-	Method SetTransientVertexBuffer(stream:Byte, transientVertexBuffer:Short, startVertex:Int, numVertices:Int) Abstract
+	Method SetVertexBuffer(stream:Byte, vertexBuffer:Short, startVertex:Int, numVertices:Int, declHandle:Short) Abstract
+	Method SetDynamicVertexBuffer(stream:Byte, dynamicVertexBuffer:Short, startVertex:Int, numVertices:Int, declHandle:Short) Abstract
+	Method SetTransientVertexBuffer(stream:Byte, transientVertexBuffer:Short, startVertex:Int, numVertices:Int, declHandle:Short) Abstract
 	Method SetVertexCount(numVertices:Int) Abstract
 	Method SetInstanceDataBuffer(idb:TBGFXInstanceDataBuffer, start:Int, num:Int) Abstract
 	Method SetInstanceDataFromVertexBuffer(vertexBuffer:Short, startVertex:Int, num:Int) Abstract
@@ -796,8 +800,8 @@ Type TBGFXRenderBase Abstract
 	Method SetComputeDynamicIndexBuffer(stage:Byte, dynamicIndexBuffer:Short, access:Int) Abstract
 	Method SetComputeDynamicVertexBuffer(stage:Byte, dynamicVertexBuffer:Short, access:Int) Abstract
 	Method SetComputeIndirectBuffer(stage:Byte, indirectBuffer:Short, access:Int) Abstract
-	Method Dispatch(id:Short, program:TBGFXProgram, numX:Int, numY:Int, numZ:Int, flags:Byte) Abstract
-	Method DispatchIndirect(id:Short, program:TBGFXProgram, indirectBuffer:Short, start:Short, num:Short, flags:Byte) Abstract
+	Method Dispatch(id:Short, program:TBGFXProgram, numX:Int, numY:Int, numZ:Int) Abstract
+	Method DispatchIndirect(id:Short, program:TBGFXProgram, indirectBuffer:Short, start:Short, num:Short) Abstract
 	Method Discard() Abstract
 	Method Blit(id:Short, dstTexture:Short, dstMip:Byte, dstX:Short, dstY:Short, dstZ:Short, srcTexture:Short, srcMip:Byte, srcX:Short, srcY:Short, srcZ:Short, width:Short, height:Short, depth:Short) Abstract
 
@@ -909,21 +913,21 @@ Type TBGFXRender Extends TBGFXRenderBase
 	Rem
 	bbdoc: Sets vertex buffer for draw primitive.
 	End Rem
-	Method SetVertexBuffer(stream:Byte, vertexBuffer:Short, startVertex:Int, numVertices:Int)
+	Method SetVertexBuffer(stream:Byte, vertexBuffer:Short, startVertex:Int, numVertices:Int, declHandle:Short)
 		bmx_bgfx_set_vertex_buffer(stream, vertexBuffer, startVertex, numVertices)
 	End Method
 	
 	Rem
 	bbdoc: Sets vertex buffer for draw primitive.
 	End Rem
-	Method SetDynamicVertexBuffer(stream:Byte, dynamicVertexBuffer:Short, startVertex:Int, numVertices:Int)
+	Method SetDynamicVertexBuffer(stream:Byte, dynamicVertexBuffer:Short, startVertex:Int, numVertices:Int, declHandle:Short)
 		bmx_bgfx_set_dynamic_vertex_buffer(stream, dynamicVertexBuffer, startVertex, numVertices)
 	End Method
 	
 	Rem
 	bbdoc: Sets vertex buffer for draw primitive.
 	End Rem
-	Method SetTransientVertexBuffer(stream:Byte, transientVertexBuffer:Short, startVertex:Int, numVertices:Int)
+	Method SetTransientVertexBuffer(stream:Byte, transientVertexBuffer:Short, startVertex:Int, numVertices:Int, declHandle:Short)
 		bmx_bgfx_set_transient_vertex_buffer(stream, transientVertexBuffer, startVertex, numVertices)
 	End Method
 	
@@ -1037,15 +1041,15 @@ Type TBGFXRender Extends TBGFXRenderBase
 	Rem
 	bbdoc: Dispatches compute.
 	End Rem
-	Method Dispatch(id:Short, program:TBGFXProgram, numX:Int, numY:Int, numZ:Int, flags:Byte)
-		bmx_bgfx_dispatch(id, program.programHandle, numX, numY, numZ, flags)
+	Method Dispatch(id:Short, program:TBGFXProgram, numX:Int, numY:Int, numZ:Int)
+		bmx_bgfx_dispatch(id, program.programHandle, numX, numY, numZ)
 	End Method
 	
 	Rem
 	bbdoc: Dispatches compute indirect.
 	End Rem
-	Method DispatchIndirect(id:Short, program:TBGFXProgram, indirectBuffer:Short, start:Short, num:Short, flags:Byte)
-		bmx_bgfx_dispatch_indirect(id, program.programHandle, indirectBuffer, start, num, flags)
+	Method DispatchIndirect(id:Short, program:TBGFXProgram, indirectBuffer:Short, start:Short, num:Short)
+		bmx_bgfx_dispatch_indirect(id, program.programHandle, indirectBuffer, start, num)
 	End Method
 	
 	Rem
@@ -1193,22 +1197,22 @@ Type TBGFXEncoder Extends TBGFXRenderBase
 	Rem
 	bbdoc: Sets vertex buffer for draw primitive.
 	End Rem
-	Method SetVertexBuffer(stream:Byte, vertexBuffer:Short, startVertex:Int, numVertices:Int)
-		bmx_bgfx_encoder_set_vertex_buffer(encoderPtr, stream, vertexBuffer, startVertex, numVertices)
+	Method SetVertexBuffer(stream:Byte, vertexBuffer:Short, startVertex:Int, numVertices:Int, declHandle:Short)
+		bmx_bgfx_encoder_set_vertex_buffer(encoderPtr, stream, vertexBuffer, startVertex, numVertices, declHandle)
 	End Method
 	
 	Rem
 	bbdoc: Sets vertex buffer for draw primitive.
 	End Rem
-	Method SetDynamicVertexBuffer(stream:Byte, dynamicVertexBuffer:Short, startVertex:Int, numVertices:Int)
-		bmx_bgfx_encoder_set_dynamic_vertex_buffer(encoderPtr, stream, dynamicVertexBuffer, startVertex, numVertices)
+	Method SetDynamicVertexBuffer(stream:Byte, dynamicVertexBuffer:Short, startVertex:Int, numVertices:Int, declHandle:Short)
+		bmx_bgfx_encoder_set_dynamic_vertex_buffer(encoderPtr, stream, dynamicVertexBuffer, startVertex, numVertices, declHandle)
 	End Method
 	
 	Rem
 	bbdoc: Sets vertex buffer for draw primitive.
 	End Rem
-	Method SetTransientVertexBuffer(stream:Byte, transientVertexBuffer:Short, startVertex:Int, numVertices:Int)
-		bmx_bgfx_encoder_set_transient_vertex_buffer(encoderPtr, stream, transientVertexBuffer, startVertex, numVertices)
+	Method SetTransientVertexBuffer(stream:Byte, transientVertexBuffer:Short, startVertex:Int, numVertices:Int, declHandle:Short)
+		bmx_bgfx_encoder_set_transient_vertex_buffer(encoderPtr, stream, transientVertexBuffer, startVertex, numVertices, declHandle)
 	End Method
 	
 	Rem
@@ -1321,15 +1325,15 @@ Type TBGFXEncoder Extends TBGFXRenderBase
 	Rem
 	bbdoc: Dispatches compute.
 	End Rem
-	Method Dispatch(id:Short, program:TBGFXProgram, numX:Int, numY:Int, numZ:Int, flags:Byte)
-		bmx_bgfx_encoder_dispatch(encoderPtr, id, program.programHandle, numX, numY, numZ, flags)
+	Method Dispatch(id:Short, program:TBGFXProgram, numX:Int, numY:Int, numZ:Int)
+		bmx_bgfx_encoder_dispatch(encoderPtr, id, program.programHandle, numX, numY, numZ)
 	End Method
 	
 	Rem
 	bbdoc: Dispatches compute indirect.
 	End Rem
-	Method DispatchIndirect(id:Short, program:TBGFXProgram, indirectBuffer:Short, start:Short, num:Short, flags:Byte)
-		bmx_bgfx_encoder_dispatch_indirect(encoderPtr, id, program.programHandle, indirectBuffer, start, num, flags)
+	Method DispatchIndirect(id:Short, program:TBGFXProgram, indirectBuffer:Short, start:Short, num:Short)
+		bmx_bgfx_encoder_dispatch_indirect(encoderPtr, id, program.programHandle, indirectBuffer, start, num)
 	End Method
 	
 	Rem

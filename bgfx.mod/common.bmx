@@ -1,4 +1,4 @@
-' Copyright (c) 2015-2018 Bruce A Henderson
+' Copyright (c) 2015-2019 Bruce A Henderson
 ' All rights reserved.
 ' 
 ' Redistribution and use in source and binary forms, with or without
@@ -44,12 +44,13 @@ Import "-framework OpenGL"
 Extern
 
 '	Function bgfx_init(renderType:Int, vendorId:Short, deviceId:Short, cb1:Byte Ptr, cb2:Byte Ptr)
-	Function bmx_bgfx_init:Int(width:Int, height:Int, rendererType:Int)
+	Function bmx_bgfx_init:Int(width:Int, height:Int, rendererType:Int, reset:Int, format:Int)
 	Function bmx_bgfx_frame:Int(capture:Int)
 	Function bmx_bgfx_reset(width:Int, height:Int, flags:Int, format:Int)
 	Function bmx_bgfx_shutdown()
 	Function bgfx_alloc:Byte Ptr(size:Int)
 	Function bgfx_copy:Byte Ptr(data:Byte Ptr, size:Int)
+	Function bmx_bgfx_render_frame:Int(msecs:Int)
 	
 	Function bmx_bgfx_get_caps:Byte Ptr()
 	
@@ -57,7 +58,7 @@ Extern
 	Function bmx_bgfx_set_view_clear(id:Short, flags:Short, rgba:Int, depth:Float, stencil:Byte)
 	Function bmx_bgfx_set_view_transform(id:Short, view:Byte Ptr, proj:Byte Ptr)
 	Function bmx_bgfx_set_view_scissor(id:Short, x:Short, y:Short, width:Short, height:Short)
-	Function bmx_bgfx_set_view_rect_auto(id:Short, x:Short, y:Short, ratio:Int)
+	Function bmx_bgfx_set_view_rect_ratio(id:Short, x:Short, y:Short, ratio:Int)
 	Function bmx_bgfx_set_view_clear_mrt(id:Short, flags:Short, depth:Float, stencil:Byte, p0:Byte, p1:Byte, p2:Byte, p3:Byte, p4:Byte, p5:Byte, p6:Byte, p7:Byte)
 	Function bmx_bgfx_set_view_mode(id:Short, viewMode:Int)
 	Function bmx_bgfx_set_view_order(id:Short, num:Short, order:Short Ptr)
@@ -142,8 +143,8 @@ Extern
 	Function bmx_bgfx_set_compute_dynamic_index_buffer(stage:Byte, dynamicIndexBuffer:Short, access:Int)
 	Function bmx_bgfx_set_compute_dynamic_vertex_buffer(stage:Byte, dynamicVertexBuffer:Short, access:Int)
 	Function bmx_bgfx_set_compute_indirect_buffer(stage:Byte, indirectBuffer:Short, access:Int)
-	Function bmx_bgfx_dispatch(id:Short, program:Short, numX:Int, numY:Int, numZ:Int, flags:Byte)
-	Function bmx_bgfx_dispatch_indirect(id:Short, program:Short, indirectBuffer:Short, start:Short, num:Short, flags:Byte)
+	Function bmx_bgfx_dispatch(id:Short, program:Short, numX:Int, numY:Int, numZ:Int)
+	Function bmx_bgfx_dispatch_indirect(id:Short, program:Short, indirectBuffer:Short, start:Short, num:Short)
 	Function bmx_bgfx_discard()
 	Function bmx_bgfx_blit(id:Short, dstTexture:Short, dstMip:Byte, dstX:Short, dstY:Short, dstZ:Short, srcTexture:Int, srcMip:Byte, srcX:Short, srcY:Short, srcZ:Short, width:Short, height:Short, depth:Short)
 
@@ -162,9 +163,9 @@ Extern
 	Function bmx_bgfx_encoder_set_index_buffer(handle:Byte Ptr, indexBuffer:Int, firstIndex:Int, numIndices:Int)
 	Function bmx_bgfx_encoder_set_dynamic_index_buffer(handle:Byte Ptr, dynamicIndexBuffer:Short, firstIndex:Int, numIndices:Int)
 	Function bmx_bgfx_encoder_set_transient_index_buffer(handle:Byte Ptr, transientIndexBuffer:Short, firstIndex:Int, numIndices:Int)
-	Function bmx_bgfx_encoder_set_vertex_buffer(handle:Byte Ptr, stream:Byte, vertexBuffer:Short, startVertex:Int, numVertices:Int)
-	Function bmx_bgfx_encoder_set_dynamic_vertex_buffer(handle:Byte Ptr, stream:Byte, dynamicVertexBuffer:Short, startVertex:Int, numVertices:Int)
-	Function bmx_bgfx_encoder_set_transient_vertex_buffer(handle:Byte Ptr, stream:Byte, transientVertexBuffer:Short, startVertex:Int, numVertices:Int)
+	Function bmx_bgfx_encoder_set_vertex_buffer(handle:Byte Ptr, stream:Byte, vertexBuffer:Short, startVertex:Int, numVertices:Int, declHandle:Short)
+	Function bmx_bgfx_encoder_set_dynamic_vertex_buffer(handle:Byte Ptr, stream:Byte, dynamicVertexBuffer:Short, startVertex:Int, numVertices:Int, declHandle:Short)
+	Function bmx_bgfx_encoder_set_transient_vertex_buffer(handle:Byte Ptr, stream:Byte, transientVertexBuffer:Short, startVertex:Int, numVertices:Int, declHandle:Short)
 	Function bmx_bgfx_encoder_set_vertex_count(handle:Byte Ptr, numVertices:Int)
 	Function bmx_bgfx_encoder_set_instance_data_buffer(handle:Byte Ptr, idb:Byte Ptr, start:Int, num:Int)
 	Function bmx_bgfx_encoder_set_instance_data_from_vertex_buffer(handle:Byte Ptr, vertexBuffer:Int, startVertex:Int, num:Int)
@@ -180,8 +181,8 @@ Extern
 	Function bmx_bgfx_encoder_set_compute_dynamic_index_buffer(handle:Byte Ptr, stage:Byte, dynamicIndexBuffer:Int, access:Int)
 	Function bmx_bgfx_encoder_set_compute_dynamic_vertex_buffer(handle:Byte Ptr, stage:Byte, dynamicVertexBuffer:Int, access:Int)
 	Function bmx_bgfx_encoder_set_compute_indirect_buffer(handle:Byte Ptr, stage:Byte, indirectBuffer:Int, access:Int)
-	Function bmx_bgfx_encoder_dispatch(handle:Byte Ptr, id:Short, program:Int, numX:Int, numY:Int, numZ:Int, flags:Byte)
-	Function bmx_bgfx_encoder_dispatch_indirect(handle:Byte Ptr, id:Short, program:Short, indirectBuffer:Int, start:Short, num:Short, flags:Byte)
+	Function bmx_bgfx_encoder_dispatch(handle:Byte Ptr, id:Short, program:Int, numX:Int, numY:Int, numZ:Int)
+	Function bmx_bgfx_encoder_dispatch_indirect(handle:Byte Ptr, id:Short, program:Short, indirectBuffer:Int, start:Short, num:Short)
 	Function bmx_bgfx_encoder_discard(handle:Byte Ptr)
 	Function bmx_bgfx_encoder_blit(handle:Byte Ptr, id:Short, dstTexture:Short, dstMip:Byte, dstX:Short, dstY:Short, dstZ:Short, srcTexture:Int, srcMip:Byte, srcX:Short, srcY:Short, srcZ:Short, width:Short, height:Short, depth:Short)
 
@@ -422,123 +423,129 @@ Const BGFX_BUFFER_ALLOW_RESIZE:Int = $04
 Const BGFX_BUFFER_INDEX32:Int = $08
 Const BGFX_BUFFER_COMPUTE_READ_WRITE:Int = BGFX_BUFFER_COMPUTE_READ | BGFX_BUFFER_COMPUTE_WRITE
 
-Const BGFX_TEXTURE_FORMAT_BC1:Int = 0          ' DXT1
-Const BGFX_TEXTURE_FORMAT_BC2:Int = 1          ' DXT3
-Const BGFX_TEXTURE_FORMAT_BC3:Int = 2          ' DXT5
-Const BGFX_TEXTURE_FORMAT_BC4:Int = 3          ' LATC1/ATI1
-Const BGFX_TEXTURE_FORMAT_BC5:Int = 4          ' LATC2/ATI2
-Const BGFX_TEXTURE_FORMAT_BC6H:Int = 5         ' BC6H
-Const BGFX_TEXTURE_FORMAT_BC7:Int = 6          ' BC7
-Const BGFX_TEXTURE_FORMAT_ETC1:Int = 7         ' ETC1 RGB8
-Const BGFX_TEXTURE_FORMAT_ETC2:Int = 8         ' ETC2 RGB8
-Const BGFX_TEXTURE_FORMAT_ETC2A:Int = 9        ' ETC2 RGBA8
-Const BGFX_TEXTURE_FORMAT_ETC2A1:Int = 10      ' ETC2 RGB8A1
-Const BGFX_TEXTURE_FORMAT_PTC12:Int = 11       ' PVRTC1 RGB 2BPP
-Const BGFX_TEXTURE_FORMAT_PTC14:Int = 12       ' PVRTC1 RGB 4BPP
-Const BGFX_TEXTURE_FORMAT_PTC12A:Int = 13      ' PVRTC1 RGBA 2BPP
-Const BGFX_TEXTURE_FORMAT_PTC14A:Int = 14      ' PVRTC1 RGBA 4BPP
-Const BGFX_TEXTURE_FORMAT_PTC22:Int = 15       ' PVRTC2 RGBA 2BPP
-Const BGFX_TEXTURE_FORMAT_PTC24:Int = 16       ' PVRTC2 RGBA 4BPP
-Const BGFX_TEXTURE_FORMAT_ATC:Int = 17         ' ATC RGB 4BPP
-Const BGFX_TEXTURE_FORMAT_ATCE:Int = 18        ' ATCE RGBA 8 BPP explicit alpha
-Const BGFX_TEXTURE_FORMAT_ATCI:Int = 19        ' ATCI RGBA 8 BPP interpolated alpha
-Const BGFX_TEXTURE_FORMAT_ASTC4x4:Int = 20     ' ASTC 4x4 8.0 BPP
-Const BGFX_TEXTURE_FORMAT_ASTC5x5:Int = 21     ' ASTC 5x5 5.12 BPP
-Const BGFX_TEXTURE_FORMAT_ASTC6x6:Int = 22     ' ASTC 6x6 3.56 BPP
-Const BGFX_TEXTURE_FORMAT_ASTC8x5:Int = 23     ' ASTC 8x5 3.20 BPP
-Const BGFX_TEXTURE_FORMAT_ASTC8x6:Int = 24     ' ASTC 8x6 2.67 BPP
-Const BGFX_TEXTURE_FORMAT_ASTC10x5:Int = 25    ' ASTC 10x5 2.56 BPP
-Const BGFX_TEXTURE_FORMAT_UNKNOWN:Int = 26     ' Compressed formats above.
-Const BGFX_TEXTURE_FORMAT_R1:Int = 27
-Const BGFX_TEXTURE_FORMAT_A8:Int = 28
-Const BGFX_TEXTURE_FORMAT_R8:Int = 29
-Const BGFX_TEXTURE_FORMAT_R8I:Int = 30
-Const BGFX_TEXTURE_FORMAT_R8U:Int = 31
-Const BGFX_TEXTURE_FORMAT_R8S:Int = 32
-Const BGFX_TEXTURE_FORMAT_R16:Int = 33
-Const BGFX_TEXTURE_FORMAT_R16I:Int = 34
-Const BGFX_TEXTURE_FORMAT_R16U:Int = 35
-Const BGFX_TEXTURE_FORMAT_R16F:Int = 36
-Const BGFX_TEXTURE_FORMAT_R16S:Int = 37
-Const BGFX_TEXTURE_FORMAT_R32I:Int = 38
-Const BGFX_TEXTURE_FORMAT_R32U:Int = 39
-Const BGFX_TEXTURE_FORMAT_R32F:Int = 40
-Const BGFX_TEXTURE_FORMAT_RG8:Int = 41
-Const BGFX_TEXTURE_FORMAT_RG8I:Int = 42
-Const BGFX_TEXTURE_FORMAT_RG8U:Int = 43
-Const BGFX_TEXTURE_FORMAT_RG8S:Int = 44
-Const BGFX_TEXTURE_FORMAT_RG16:Int = 45
-Const BGFX_TEXTURE_FORMAT_RG16I:Int = 46
-Const BGFX_TEXTURE_FORMAT_RG16U:Int = 47
-Const BGFX_TEXTURE_FORMAT_RG16F:Int = 48
-Const BGFX_TEXTURE_FORMAT_RG16S:Int = 49
-Const BGFX_TEXTURE_FORMAT_RG32I:Int = 50
-Const BGFX_TEXTURE_FORMAT_RG32U:Int = 51
-Const BGFX_TEXTURE_FORMAT_RG32F:Int = 52
-Const BGFX_TEXTURE_FORMAT_RGB8:Int = 53
-Const BGFX_TEXTURE_FORMAT_RGB8I:Int = 54
-Const BGFX_TEXTURE_FORMAT_RGB8U:Int = 55
-Const BGFX_TEXTURE_FORMAT_RGB8S:Int = 56
-Const BGFX_TEXTURE_FORMAT_RGB9E5F:Int = 57
-Const BGFX_TEXTURE_FORMAT_BGRA8:Int = 58
-Const BGFX_TEXTURE_FORMAT_RGBA8:Int = 59
-Const BGFX_TEXTURE_FORMAT_RGBA8I:Int = 60
-Const BGFX_TEXTURE_FORMAT_RGBA8U:Int = 61
-Const BGFX_TEXTURE_FORMAT_RGBA8S:Int = 62
-Const BGFX_TEXTURE_FORMAT_RGBA16:Int = 63
-Const BGFX_TEXTURE_FORMAT_RGBA16I:Int = 64
-Const BGFX_TEXTURE_FORMAT_RGBA16U:Int = 65
-Const BGFX_TEXTURE_FORMAT_RGBA16F:Int = 66
-Const BGFX_TEXTURE_FORMAT_RGBA16S:Int = 67
-Const BGFX_TEXTURE_FORMAT_RGBA32I:Int = 68
-Const BGFX_TEXTURE_FORMAT_RGBA32U:Int = 69
-Const BGFX_TEXTURE_FORMAT_RGBA32F:Int = 70
-Const BGFX_TEXTURE_FORMAT_R5G6B5:Int = 71
-Const BGFX_TEXTURE_FORMAT_RGBA4:Int = 72
-Const BGFX_TEXTURE_FORMAT_RGB5A1:Int = 73
-Const BGFX_TEXTURE_FORMAT_RGB10A2:Int = 74
-Const BGFX_TEXTURE_FORMAT_RG11B10F:Int = 75
-Const BGFX_TEXTURE_FORMAT_UNKNOWNDEPTH:Int = 76 ' Depth formats below.
-Const BGFX_TEXTURE_FORMAT_D16:Int = 77
-Const BGFX_TEXTURE_FORMAT_D24:Int = 78
-Const BGFX_TEXTURE_FORMAT_D24S8:Int = 79
-Const BGFX_TEXTURE_FORMAT_D32:Int = 80
-Const BGFX_TEXTURE_FORMAT_D16F:Int = 81
-Const BGFX_TEXTURE_FORMAT_D24F:Int = 82
-Const BGFX_TEXTURE_FORMAT_D32F:Int = 83
-Const BGFX_TEXTURE_FORMAT_D0S8:Int = 84
-Const BGFX_TEXTURE_FORMAT_COUNT:Int = 85
+Enum EBGFXTextureFormat
+	BC1
+	BC2
+	BC3
+	BC4
+	BC5
+	BC6H
+	BC7
+	ETC1
+	ETC2
+	ETC2A
+	ETC2A1
+	PTC12
+	PTC14
+	PTC12A
+	PTC14A
+	PTC22
+	PTC24
+	ATC
+	ATCE
+	ATCI
+	ASTC4X4
+	ASTC5X5
+	ASTC6X6
+	ASTC8X5
+	ASTC8X6
+	ASTC10X5
+	UNKNOWN
+	R1
+	A8
+	R8
+	R8I
+	R8U
+	R8S
+	R16
+	R16I
+	R16U
+	R16F
+	R16S
+	R32I
+	R32U
+	R32F
+	RG8
+	RG8I
+	RG8U
+	RG8S
+	RG16
+	RG16I
+	RG16U
+	RG16F
+	RG16S
+	RG32I
+	RG32U
+	RG32F
+	RGB8
+	RGB8I
+	RGB8U
+	RGB8S
+	RGB9E5F
+	BGRA8
+	RGBA8
+	RGBA8I
+	RGBA8U
+	RGBA8S
+	RGBA16
+	RGBA16I
+	RGBA16U
+	RGBA16F
+	RGBA16S
+	RGBA32I
+	RGBA32U
+	RGBA32F
+	R5G6B5
+	RGBA4
+	RGB5A1
+	RGB10A2
+	RG11B10F
+	UNKNOWNDEPTH
+	D16
+	D24
+	D24S8
+	D32
+	D16F
+	D24F
+	D32F
+	D0S8
+	COUNT
+End Enum
 
+Enum EBGFXAttrib
+	POSITION = 0
+	NORMAL
+	TANGENT
+	BITANGENT
+	COLOR0
+	COLOR1
+	COLOR2
+	COLOR3
+	INDICES
+	WEIGHT
+	TEXCOORD0
+	TEXCOORD1
+	TEXCOORD2
+	TEXCOORD3
+	TEXCOORD4
+	TEXCOORD5
+	TEXCOORD6
+	TEXCOORD7
+End Enum
 
-Const BGFX_ATTRIB_POSITION:Int = 0
-Const BGFX_ATTRIB_NORMAL:Int = 1
-Const BGFX_ATTRIB_TANGENT:Int = 2
-Const BGFX_ATTRIB_BITANGENT:Int = 3
-Const BGFX_ATTRIB_COLOR0:Int = 4
-Const BGFX_ATTRIB_COLOR1:Int = 5
-Const BGFX_ATTRIB_COLOR2:Int = 6
-Const BGFX_ATTRIB_COLOR3:Int = 7
-Const BGFX_ATTRIB_INDICES:Int = 8
-Const BGFX_ATTRIB_WEIGHT:Int = 9
-Const BGFX_ATTRIB_TEXCOORD0:Int = 10
-Const BGFX_ATTRIB_TEXCOORD1:Int = 11
-Const BGFX_ATTRIB_TEXCOORD2:Int = 12
-Const BGFX_ATTRIB_TEXCOORD3:Int = 13
-Const BGFX_ATTRIB_TEXCOORD4:Int = 14
-Const BGFX_ATTRIB_TEXCOORD5:Int = 15
-Const BGFX_ATTRIB_TEXCOORD6:Int = 16
-Const BGFX_ATTRIB_TEXCOORD7:Int = 17
-
-Const BGFX_RENDERER_TYPE_NOOP:Int = 0
-Const BGFX_RENDERER_TYPE_DIRECT3D9:Int = 1
-Const BGFX_RENDERER_TYPE_DIRECT3D11:Int = 2
-Const BGFX_RENDERER_TYPE_DIRECT3D12:Int = 3
-Const BGFX_RENDERER_TYPE_GNM:Int = 4
-Const BGFX_RENDERER_TYPE_METAL:Int = 5
-Const BGFX_RENDERER_TYPE_OPENGLES:Int = 6
-Const BGFX_RENDERER_TYPE_OPENGL:Int = 7
-Const BGFX_RENDERER_TYPE_VULKAN:Int = 8
-Const BGFX_RENDERER_TYPE_COUNT:Int = 9
+Enum EBGFXRenderType
+	NOOP = 0
+	DIRECT3D9
+	DIRECT3D11
+	DIRECT3D12
+	GNM
+	METAL
+	NVN
+	OPENGLES
+	OPENGL
+	VULKAN
+	COUNT
+End Enum
 
 Const BGFX_STENCIL_NONE:Int = $00000000
 Const BGFX_STENCIL_MASK:Int = $FFFFFFFF
@@ -690,3 +697,6 @@ Rem
 bbdoc: Rendering with VertexID only is supported.
 End Rem
 Const BGFX_CAPS_VERTEX_ID:Long = $0000000001000000:Long
+
+Const BGFX_DEBUG_STATS:Int = $4
+Const BGFX_DEBUG_TEXT:Int = $8

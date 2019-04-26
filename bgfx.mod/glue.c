@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2015-2018 Bruce A Henderson
+  Copyright (c) 2015-2019 Bruce A Henderson
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
@@ -30,11 +30,12 @@
 
 /* ----------------------------------------------------- */
 
-int bmx_bgfx_init(int width, int height, int rendererType);
+int bmx_bgfx_init(int width, int height, int rendererType, int reset, int format);
 
 uint32_t bmx_bgfx_frame(int capture);
 void bmx_bgfx_reset(uint32_t width, uint32_t height, uint32_t flags, int format);
 void bmx_bgfx_shutdown();
+int bmx_bgfx_render_frame(int msecs);
 
 //void bmx_bgfx_set_clear_color(int index, int r, int g, int b, int a);
 //void bmx_bgfx_set_state(BBInt64 state, int r, int g, int b, int a);
@@ -129,8 +130,8 @@ void bmx_bgfx_set_compute_vertex_buffer(uint8_t stage, uint16_t vertexBuffer, in
 void bmx_bgfx_set_compute_dynamic_index_buffer(uint8_t stage, uint16_t dynamicIndexBuffer, int access);
 void bmx_bgfx_set_compute_dynamic_vertex_buffer(uint8_t stage, uint16_t dynamicVertexBuffer, int access);
 void bmx_bgfx_set_compute_indirect_buffer(uint8_t stage, uint16_t indirectBuffer, int access);
-void bmx_bgfx_dispatch(uint16_t id, uint16_t program, int numX, int numY, int numZ, uint8_t flags);
-void bmx_bgfx_dispatch_indirect(uint16_t id, uint16_t program, uint16_t indirectBuffer, uint16_t start, uint16_t num, uint8_t flags);
+void bmx_bgfx_dispatch(uint16_t id, uint16_t program, int numX, int numY, int numZ);
+void bmx_bgfx_dispatch_indirect(uint16_t id, uint16_t program, uint16_t indirectBuffer, uint16_t start, uint16_t num);
 void bmx_bgfx_discard();
 void bmx_bgfx_blit(uint16_t id, uint16_t dstTexture, uint8_t dstMip, uint16_t dstX, uint16_t dstY, uint16_t dstZ, uint16_t srcTexture, uint8_t srcMip, uint16_t srcX, uint16_t srcY, uint16_t srcZ, uint16_t width, uint16_t height, uint16_t depth);
 
@@ -147,9 +148,9 @@ void bmx_bgfx_encoder_set_uniform(struct bgfx_encoder_s * encoder, uint16_t unif
 void bmx_bgfx_encoder_set_index_buffer(struct bgfx_encoder_s * encoder, uint16_t indexBuffer, int firstIndex, int numIndices);
 void bmx_bgfx_encoder_set_dynamic_index_buffer(struct bgfx_encoder_s * encoder, uint16_t dynamicIndexBuffer, int firstIndex, int numIndices);
 void bmx_bgfx_encoder_set_transient_index_buffer(struct bgfx_encoder_s * encoder, bgfx_transient_index_buffer_t * transientIndexBuffer, int firstIndex, int numIndices);
-void bmx_bgfx_encoder_set_vertex_buffer(struct bgfx_encoder_s * encoder, uint8_t stream, uint16_t vertexBuffer, int startVertex, int numVertices);
-void bmx_bgfx_encoder_set_dynamic_vertex_buffer(struct bgfx_encoder_s * encoder, uint8_t stream, uint16_t dynamicVertexBuffer, int startVertex, int numVertices);
-void bmx_bgfx_encoder_set_transient_vertex_buffer(struct bgfx_encoder_s * encoder, uint8_t stream, bgfx_transient_vertex_buffer_t * transientVertexBuffer, int startVertex, int numVertices);
+void bmx_bgfx_encoder_set_vertex_buffer(struct bgfx_encoder_s * encoder, uint8_t stream, uint16_t vertexBuffer, int startVertex, int numVertices, uint16_t declHandle);
+void bmx_bgfx_encoder_set_dynamic_vertex_buffer(struct bgfx_encoder_s * encoder, uint8_t stream, uint16_t dynamicVertexBuffer, int startVertex, int numVertices, uint16_t declHandle);
+void bmx_bgfx_encoder_set_transient_vertex_buffer(struct bgfx_encoder_s * encoder, uint8_t stream, bgfx_transient_vertex_buffer_t * transientVertexBuffer, int startVertex, int numVertices, uint16_t declHandle);
 void bmx_bgfx_encoder_set_vertex_count(struct bgfx_encoder_s * encoder, int numVertices);
 void bmx_bgfx_encoder_set_instance_data_buffer(struct bgfx_encoder_s * encoder, bgfx_instance_data_buffer_t * idb, int start, int num);
 void bmx_bgfx_encoder_set_instance_data_from_vertex_buffer(struct bgfx_encoder_s * encoder, uint16_t vertexBuffer, int startVertex, int num);
@@ -165,8 +166,8 @@ void bmx_bgfx_encoder_set_compute_vertex_buffer(struct bgfx_encoder_s * encoder,
 void bmx_bgfx_encoder_set_compute_dynamic_index_buffer(struct bgfx_encoder_s * encoder, uint8_t stage, uint16_t dynamicIndexBuffer, int access);
 void bmx_bgfx_encoder_set_compute_dynamic_vertex_buffer(struct bgfx_encoder_s * encoder, uint8_t stage, uint16_t dynamicVertexBuffer, int access);
 void bmx_bgfx_encoder_set_compute_indirect_buffer(struct bgfx_encoder_s * encoder, uint8_t stage, uint16_t indirectBuffer, int access);
-void bmx_bgfx_encoder_dispatch(struct bgfx_encoder_s * encoder, uint16_t id, uint16_t program, int numX, int numY, int numZ, uint8_t flags);
-void bmx_bgfx_encoder_dispatch_indirect(struct bgfx_encoder_s * encoder, uint16_t id, uint16_t program, uint16_t indirectBuffer, uint16_t start, uint16_t num, uint8_t flags);
+void bmx_bgfx_encoder_dispatch(struct bgfx_encoder_s * encoder, uint16_t id, uint16_t program, int numX, int numY, int numZ);
+void bmx_bgfx_encoder_dispatch_indirect(struct bgfx_encoder_s * encoder, uint16_t id, uint16_t program, uint16_t indirectBuffer, uint16_t start, uint16_t num);
 void bmx_bgfx_encoder_discard(struct bgfx_encoder_s * encoder);
 void bmx_bgfx_encoder_blit(struct bgfx_encoder_s * encoder, uint16_t id, uint16_t dstTexture, uint8_t dstMip, uint16_t dstX, uint16_t dstY, uint16_t dstZ, uint16_t srcTexture, uint8_t srcMip, uint16_t srcX, uint16_t srcY, uint16_t srcZ, uint16_t width, uint16_t height, uint16_t depth);
 
@@ -196,10 +197,10 @@ uint32_t bmx_bgfx_capslimits_transientIbSize(bgfx_caps_limits_t * limits);
 
 /* ----------------------------------------------------- */
 
-int bmx_bgfx_init(int width, int height, int rendererType) {
+int bmx_bgfx_init(int width, int height, int rendererType, int reset, int format) {
 	bgfx_init_t init;
 	bgfx_init_ctor(&init);
-	
+
 	init.type = rendererType;
 
 	if (!bgfx_init(&init)) {
@@ -207,7 +208,7 @@ int bmx_bgfx_init(int width, int height, int rendererType) {
 		return 0;
 	}
 
-	bgfx_reset(width, height, BGFX_RESET_VSYNC, BGFX_TEXTURE_FORMAT_COUNT);	
+	bmx_bgfx_reset(width, height, BGFX_RESET_VSYNC, BGFX_TEXTURE_FORMAT_COUNT);	
 
 	return 1;
 }
@@ -222,6 +223,10 @@ void bmx_bgfx_reset(uint32_t width, uint32_t height, uint32_t flags, int format)
 
 void bmx_bgfx_shutdown() {
 	bgfx_shutdown();
+}
+
+int bmx_bgfx_render_frame(int msecs) {
+	return bgfx_render_frame(msecs);
 }
 
 /*
@@ -298,8 +303,8 @@ void bmx_bgfx_set_view_scissor(bgfx_view_id_t id, uint16_t x, uint16_t y, uint16
 	bgfx_set_view_scissor(id, x, y, width, height);
 }
 
-void bmx_bgfx_set_view_rect_auto(bgfx_view_id_t id, uint16_t x, uint16_t y, int ratio) {
-	bgfx_set_view_rect_auto(id, x, y, ratio);
+void bmx_bgfx_set_view_rect_ratio(bgfx_view_id_t id, uint16_t x, uint16_t y, int ratio) {
+	bgfx_set_view_rect_ratio(id, x, y, ratio);
 }
 
 void bmx_bgfx_set_view_clear_mrt(bgfx_view_id_t id, uint16_t flags, float depth, uint8_t stencil, uint8_t p0, uint8_t p1, uint8_t p2, uint8_t p3, uint8_t p4, uint8_t p5, uint8_t p6, uint8_t p7) {
@@ -578,12 +583,12 @@ void bmx_bgfx_set_compute_indirect_buffer(uint8_t stage, uint16_t indirectBuffer
 	bgfx_set_compute_indirect_buffer(stage, *(bgfx_indirect_buffer_handle_t*)(&indirectBuffer), access);
 }
 
-void bmx_bgfx_dispatch(uint16_t id, uint16_t program, int numX, int numY, int numZ, uint8_t flags) {
-	bgfx_dispatch(id, *(bgfx_program_handle_t*)(&program), numX, numY, numZ, flags);
+void bmx_bgfx_dispatch(uint16_t id, uint16_t program, int numX, int numY, int numZ) {
+	bgfx_dispatch(id, *(bgfx_program_handle_t*)(&program), numX, numY, numZ);
 }
 
-void bmx_bgfx_dispatch_indirect(uint16_t id, uint16_t program, uint16_t indirectBuffer, uint16_t start, uint16_t num, uint8_t flags) {
-	bgfx_dispatch_indirect(id, *(bgfx_program_handle_t*)(&program), *(bgfx_indirect_buffer_handle_t*)(&indirectBuffer), start, num, flags);
+void bmx_bgfx_dispatch_indirect(uint16_t id, uint16_t program, uint16_t indirectBuffer, uint16_t start, uint16_t num) {
+	bgfx_dispatch_indirect(id, *(bgfx_program_handle_t*)(&program), *(bgfx_indirect_buffer_handle_t*)(&indirectBuffer), start, num);
 }
 
 void bmx_bgfx_discard(struct bgfx_s * encoder) {
@@ -650,16 +655,16 @@ void bmx_bgfx_encoder_set_transient_index_buffer(struct bgfx_encoder_s * encoder
 	bgfx_encoder_set_transient_index_buffer(encoder, transientIndexBuffer, firstIndex, numIndices);
 }
 
-void bmx_bgfx_encoder_set_vertex_buffer(struct bgfx_encoder_s * encoder, uint8_t stream, uint16_t vertexBuffer, int startVertex, int numVertices) {
-	bgfx_encoder_set_vertex_buffer(encoder, stream, *(bgfx_vertex_buffer_handle_t*)(&vertexBuffer), startVertex, numVertices);
+void bmx_bgfx_encoder_set_vertex_buffer(struct bgfx_encoder_s * encoder, uint8_t stream, uint16_t vertexBuffer, int startVertex, int numVertices, uint16_t declHandle) {
+	bgfx_encoder_set_vertex_buffer(encoder, stream, *(bgfx_vertex_buffer_handle_t*)(&vertexBuffer), startVertex, numVertices, *(bgfx_vertex_decl_handle_t*)(&declHandle));
 }
 
-void bmx_bgfx_encoder_set_dynamic_vertex_buffer(struct bgfx_encoder_s * encoder, uint8_t stream, uint16_t dynamicVertexBuffer, int startVertex, int numVertices) {
-	bgfx_encoder_set_dynamic_vertex_buffer(encoder, stream, *(bgfx_dynamic_vertex_buffer_handle_t*)(&dynamicVertexBuffer), startVertex, numVertices);
+void bmx_bgfx_encoder_set_dynamic_vertex_buffer(struct bgfx_encoder_s * encoder, uint8_t stream, uint16_t dynamicVertexBuffer, int startVertex, int numVertices, uint16_t declHandle) {
+	bgfx_encoder_set_dynamic_vertex_buffer(encoder, stream, *(bgfx_dynamic_vertex_buffer_handle_t*)(&dynamicVertexBuffer), startVertex, numVertices, *(bgfx_vertex_decl_handle_t*)(&declHandle));
 }
 
-void bmx_bgfx_encoder_set_transient_vertex_buffer(struct bgfx_encoder_s * encoder, uint8_t stream, bgfx_transient_vertex_buffer_t * transientVertexBuffer, int startVertex, int numVertices) {
-	bgfx_encoder_set_transient_vertex_buffer(encoder, stream, transientVertexBuffer, startVertex, numVertices);
+void bmx_bgfx_encoder_set_transient_vertex_buffer(struct bgfx_encoder_s * encoder, uint8_t stream, bgfx_transient_vertex_buffer_t * transientVertexBuffer, int startVertex, int numVertices, uint16_t declHandle) {
+	bgfx_encoder_set_transient_vertex_buffer(encoder, stream, transientVertexBuffer, startVertex, numVertices, *(bgfx_vertex_decl_handle_t*)(&declHandle));
 }
 
 void bmx_bgfx_encoder_set_vertex_count(struct bgfx_encoder_s * encoder, int numVertices) {
@@ -722,12 +727,12 @@ void bmx_bgfx_encoder_set_compute_indirect_buffer(struct bgfx_encoder_s * encode
 	bgfx_encoder_set_compute_indirect_buffer(encoder, stage, *(bgfx_indirect_buffer_handle_t*)(&indirectBuffer), access);
 }
 
-void bmx_bgfx_encoder_dispatch(struct bgfx_encoder_s * encoder, uint16_t id, uint16_t program, int numX, int numY, int numZ, uint8_t flags) {
-	bgfx_encoder_dispatch(encoder, id, *(bgfx_program_handle_t*)(&program), numX, numY, numZ, flags);
+void bmx_bgfx_encoder_dispatch(struct bgfx_encoder_s * encoder, uint16_t id, uint16_t program, int numX, int numY, int numZ) {
+	bgfx_encoder_dispatch(encoder, id, *(bgfx_program_handle_t*)(&program), numX, numY, numZ);
 }
 
-void bmx_bgfx_encoder_dispatch_indirect(struct bgfx_encoder_s * encoder, uint16_t id, uint16_t program, uint16_t indirectBuffer, uint16_t start, uint16_t num, uint8_t flags) {
-	bgfx_encoder_dispatch_indirect(encoder, id, *(bgfx_program_handle_t*)(&program), *(bgfx_indirect_buffer_handle_t*)(&indirectBuffer), start, num, flags);
+void bmx_bgfx_encoder_dispatch_indirect(struct bgfx_encoder_s * encoder, uint16_t id, uint16_t program, uint16_t indirectBuffer, uint16_t start, uint16_t num) {
+	bgfx_encoder_dispatch_indirect(encoder, id, *(bgfx_program_handle_t*)(&program), *(bgfx_indirect_buffer_handle_t*)(&indirectBuffer), start, num);
 }
 
 void bmx_bgfx_encoder_discard(struct bgfx_encoder_s * encoder) {
