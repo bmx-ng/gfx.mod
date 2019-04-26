@@ -24,35 +24,45 @@
 '
 SuperStrict
 
-Import gfx.bimg
-Import gfx.bxstream
+Import "../bx.mod/bx/include/*.h"
+Import "../bgfx.mod/bgfx/include/*.h"
 
-Import "source.bmx"
+?win32x86
+Import "../../sdl.mod/sdl.mod/include/win32x86/*.h"
 
-Extern
+?win32x64
+Import "../../sdl.mod/sdl.mod/include/win32x64/*.h"
 
-	Function bmx_bimg_options_new:Byte Ptr()
-	Function bmx_bimg_options_free(handle:Byte Ptr)
-	Function bmx_bimg_options_setMaxSize(handle:Byte Ptr, maxSize:Int)
-	Function bmx_bimg_options_setEdge(handle:Byte Ptr, edge:Float)
-	Function bmx_bimg_options_setFormat(handle:Byte Ptr, format:Int)
-	Function bmx_bimg_options_setQuality(handle:Byte Ptr, quality:Int)
-	Function bmx_bimg_options_setMips(handle:Byte Ptr, mips:Int)
-	Function bmx_bimg_options_setNormalMap(handle:Byte Ptr, normalMap:Int)
-	Function bmx_bimg_options_setEquirect(handle:Byte Ptr, equirect:Int)
-	Function bmx_bimg_options_setIqa(handle:Byte Ptr, iqa:Int)
-	Function bmx_bimg_options_setPma(handle:Byte Ptr, pma:Int)
-	Function bmx_bimg_options_setSdf(handle:Byte Ptr, sdf:Int)
-	Function bmx_bimg_options_setAlphaTest(handle:Byte Ptr, alphaTest:Int)
-	Function bmx_bimg_options_setOutputType(handle:Byte Ptr, outputType:Int)
-	
-	Function bmx_bimg_texturec_convert(iStream:Byte Ptr, oStream:Byte Ptr, options:Byte Ptr)
+?osx
+Import "../../sdl.mod/sdl.mod/include/macos/*.h"
+
+?linuxx86
+Import "../../sdl.mod/sdl.mod/include/linuxx86/*.h"
+
+?linuxx64
+Import "../../sdl.mod/sdl.mod/include/linuxx64/*.h"
+
+?raspberrypi
+Import "../../sdl.mod/sdl.mod/include/raspberrypi/*.h"
+
+?android
+Import "../../sdl.mod/sdl.mod/include/android/*.h"
+
+?emscripten
+Import "../../sdl.mod/sdl.mod/include/emscripten/*.h"
+
+?ios
+Import "../../sdl.mod/sdl.mod/include/ios/*.h"
+
+?
+
+Import "../../sdl.mod/sdl.mod/SDL/include/*.h"
 
 
-End Extern
-
-Const OUTPUT_KTX:Int = 0
-Const OUTPUT_DDS:Int = 1
-Const OUTPUT_PNG:Int = 2
-Const OUTPUT_EXR:Int = 3
-Const OUTPUT_HDR:Int = 4
+'?win32
+Import "glue.c"
+'?linux
+' TODO
+'?macos
+' TODO
+'?

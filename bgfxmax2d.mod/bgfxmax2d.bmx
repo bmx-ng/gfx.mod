@@ -1,4 +1,4 @@
-' Copyright (c) 2015-2018 Bruce A Henderson
+' Copyright (c) 2015-2019 Bruce A Henderson
 ' All rights reserved.
 ' 
 ' Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,8 @@ Strict
 Module gfx.bgfxmax2d
 
 Import brl.max2d
-Import gfx.bgfxgraphics
+Import gfx.bgfxsdlgraphics
+'Import gfx.bgfxgraphics
 
 Private
 
@@ -41,6 +42,7 @@ Type TBGFXMax2DDriver Extends TMax2DDriver
 	
 	Method New()
 		bgfx = New TBGFXRender
+'		AddHook EmitEventHook,EventHook,Null,0
 	End Method
 
 	Method Create:TBGFXMax2DDriver()
@@ -106,11 +108,15 @@ Type TBGFXMax2DDriver Extends TMax2DDriver
 	End Method
 
 	Method SetClsColor( red:Int,green:Int,blue:Int )
-		' TODO
+		TBGFX.SetViewClear(0, BGFX_CLEAR_COLOR|BGFX_CLEAR_DEPTH, red Shl 24 | green Shl 16 | blue Shl 8 | $ff, 1, 0)
 	End Method
 
 	Method SetViewport( x:Int,y:Int,width:Int,height:Int )
-		' TODO
+		If x = 0 And y = 0 And width = GraphicsWidth() And height = GraphicsHeight() Then
+			TBGFX.SetViewScissor(0, 0, 0, 0, 0)
+		Else
+			TBGFX.SetViewScissor(0, Short(x), Short(y), Short(width), Short(height))
+		End If
 	End Method
 
 	Method SetTransform( xx#,xy#,yx#,yy# )
@@ -122,6 +128,7 @@ Type TBGFXMax2DDriver Extends TMax2DDriver
 	End Method
 	
 	Method Cls()
+		GfxGraphicsDriver().SetViewRect()
 		bgfx.Touch(0)
 	End Method
 
@@ -157,6 +164,24 @@ Type TBGFXMax2DDriver Extends TMax2DDriver
 	
 	Method SetResolution( width#,height# )
 		' TODO
+	End Method
+Rem
+	Function EventHook:Object( id:Int, data:Object, context:Object )
+		Local ev:TEvent=TEvent(data)
+		If Not ev Return data
+
+		Select ev.id
+			Case EVENT_WINDOWSIZE
+				Print "window size"
+				TBGFX.Reset(ev.x, ev.y, BGFX_RESET_VSYNC | BGFX_RESET_HIDPI)
+		End Select
+		
+		Return data
+	End Function
+End Rem	
+
+	Method CanResize:Int()
+		Return True
 	End Method
 
 End Type

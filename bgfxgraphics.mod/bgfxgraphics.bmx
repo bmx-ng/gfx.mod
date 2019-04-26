@@ -123,7 +123,7 @@ Type TGfxGraphicsDriver Extends TGraphicsDriver
 	Rem
 	bbdoc: 
 	End Rem
-	Method InitGraphics(width:Int, height:Int, rendererType:Int = BGFX_RENDERER_TYPE_COUNT)
+	Method InitGraphics(width:Int, height:Int, rendererType:EBGFXRenderType = EBGFXRenderType.COUNT)
 		If Not TBGFX.Init(width, height, rendererType) Then
 			Throw "Failed to initialise graphics"
 		End If

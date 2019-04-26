@@ -24,35 +24,14 @@
 '
 SuperStrict
 
-Import gfx.bimg
-Import gfx.bxstream
+Import BRL.Graphics
+Import gfx.bgfx
+Import SDL.SDLSystem
+Import SDL.SDLVideo
+'?Not bmxng
+'Import BRL.System
+'?bmxng
+'Import BRL.SystemDefault
+'?
 
 Import "source.bmx"
-
-Extern
-
-	Function bmx_bimg_options_new:Byte Ptr()
-	Function bmx_bimg_options_free(handle:Byte Ptr)
-	Function bmx_bimg_options_setMaxSize(handle:Byte Ptr, maxSize:Int)
-	Function bmx_bimg_options_setEdge(handle:Byte Ptr, edge:Float)
-	Function bmx_bimg_options_setFormat(handle:Byte Ptr, format:Int)
-	Function bmx_bimg_options_setQuality(handle:Byte Ptr, quality:Int)
-	Function bmx_bimg_options_setMips(handle:Byte Ptr, mips:Int)
-	Function bmx_bimg_options_setNormalMap(handle:Byte Ptr, normalMap:Int)
-	Function bmx_bimg_options_setEquirect(handle:Byte Ptr, equirect:Int)
-	Function bmx_bimg_options_setIqa(handle:Byte Ptr, iqa:Int)
-	Function bmx_bimg_options_setPma(handle:Byte Ptr, pma:Int)
-	Function bmx_bimg_options_setSdf(handle:Byte Ptr, sdf:Int)
-	Function bmx_bimg_options_setAlphaTest(handle:Byte Ptr, alphaTest:Int)
-	Function bmx_bimg_options_setOutputType(handle:Byte Ptr, outputType:Int)
-	
-	Function bmx_bimg_texturec_convert(iStream:Byte Ptr, oStream:Byte Ptr, options:Byte Ptr)
-
-
-End Extern
-
-Const OUTPUT_KTX:Int = 0
-Const OUTPUT_DDS:Int = 1
-Const OUTPUT_PNG:Int = 2
-Const OUTPUT_EXR:Int = 3
-Const OUTPUT_HDR:Int = 4
