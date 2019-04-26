@@ -68,6 +68,9 @@ Type TGfxGraphics Extends TGraphics
 		_context=0
 	End Method
 	
+	Method Resize:Int(width:Int, height:Int) Override
+	End Method
+	
 	Field _context:Byte Ptr
 	
 End Type

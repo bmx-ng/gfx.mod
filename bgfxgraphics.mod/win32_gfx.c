@@ -25,7 +25,7 @@
 */
 #include <windows.h>
 
-#include "bgfx/c99/platform.h"
+#include "bgfx/c99/bgfx.h"
 #include <brl.mod/systemdefault.mod/system.h>
 
 static const wchar_t *CLASS_NAMEW=L"BlitzMax BgfxGraphics";
