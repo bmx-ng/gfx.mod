@@ -1,6 +1,6 @@
 /*
-  Copyright 2011-2018 Branimir Karadzic.
-  Copyright (c) 2015-2018 Bruce A Henderson
+  Copyright 2011-2019 Branimir Karadzic.
+  Copyright (c) 2015-2019 Bruce A Henderson
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
@@ -114,7 +114,7 @@ static void imageRgba32fNormalize(void* _dst, uint32_t _width, uint32_t _height,
 		const float* rgba = (const float*)&src[0];
 		for (uint32_t xx = 0; xx < _width; ++xx, rgba += 4, dst += 16)
 		{
-			const bx::Vec3 xyz = bx::load(rgba);
+			const bx::Vec3 xyz = bx::load<bx::Vec3>(rgba);
 			bx::store(dst, bx::normalize(xyz) );
 		}
 	}
