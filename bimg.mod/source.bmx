@@ -1,4 +1,4 @@
-' Copyright (c) 2015-2018 Bruce A Henderson
+' Copyright (c) 2015-2019 Bruce A Henderson
 ' All rights reserved.
 ' 
 ' Redistribution and use in source and binary forms, with or without
@@ -26,6 +26,8 @@ SuperStrict
 
 Import "bimg/include/*.h"
 Import "bimg/3rdparty/*.h"
+Import "bimg/3rdparty/astc-codec/include/*.h"
+Import "bimg/3rdparty/astc-codec/*.h"
 Import "bimg/3rdparty/iqa/include/*.h"
 Import "../bx.mod/bx/include/*.h"
 
@@ -45,3 +47,15 @@ Import "bimg/3rdparty/iqa/source/mse.c"
 Import "bimg/3rdparty/iqa/source/ms_ssim.c"
 Import "bimg/3rdparty/iqa/source/psnr.c"
 Import "bimg/3rdparty/iqa/source/ssim.c"
+
+Import "bimg/3rdparty/astc-codec/src/decoder/astc_file.cc"
+Import "bimg/3rdparty/astc-codec/src/decoder/codec.cc"
+Import "bimg/3rdparty/astc-codec/src/decoder/endpoint_codec.cc"
+Import "bimg/3rdparty/astc-codec/src/decoder/footprint.cc"
+Import "bimg/3rdparty/astc-codec/src/decoder/integer_sequence_codec.cc"
+Import "bimg/3rdparty/astc-codec/src/decoder/intermediate_astc_block.cc"
+Import "bimg/3rdparty/astc-codec/src/decoder/logical_astc_block.cc"
+Import "bimg/3rdparty/astc-codec/src/decoder/partition.cc"
+Import "bimg/3rdparty/astc-codec/src/decoder/physical_astc_block.cc"
+Import "bimg/3rdparty/astc-codec/src/decoder/quantization.cc"
+Import "bimg/3rdparty/astc-codec/src/decoder/weight_infill.cc"

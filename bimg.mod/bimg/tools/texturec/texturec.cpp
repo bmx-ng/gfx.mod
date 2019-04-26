@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2018 Branimir Karadzic. All rights reserved.
+ * Copyright 2011-2019 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bimg#license-bsd-2-clause
  */
 
@@ -90,7 +90,7 @@ void imageRgba32fNormalize(void* _dst, uint32_t _width, uint32_t _height, uint32
 		const float* rgba = (const float*)&src[0];
 		for (uint32_t xx = 0; xx < _width; ++xx, rgba += 4, dst += 16)
 		{
-			const bx::Vec3 xyz = bx::load(rgba);
+			const bx::Vec3 xyz = bx::load<bx::Vec3>(rgba);
 			bx::store(dst, bx::normalize(xyz) );
 		}
 	}
@@ -897,7 +897,7 @@ void help(const char* _error = NULL, bool _showHelp = true)
 
 	fprintf(stderr
 		, "texturec, bgfx texture compiler tool, version %d.%d.%d.\n"
-		  "Copyright 2011-2018 Branimir Karadzic. All rights reserved.\n"
+		  "Copyright 2011-2019 Branimir Karadzic. All rights reserved.\n"
 		  "License: https://github.com/bkaradzic/bimg#license-bsd-2-clause\n\n"
 		, BIMG_TEXTUREC_VERSION_MAJOR
 		, BIMG_TEXTUREC_VERSION_MINOR
@@ -919,7 +919,7 @@ void help(const char* _error = NULL, bool _showHelp = true)
 		  "    *.png (input, output)  Portable Network Graphics.\n"
 		  "    *.psd (input)          Photoshop Document.\n"
 		  "    *.pvr (input)          PowerVR.\n"
-		  "    *.tga (input)          Targa.\n"
+		  "    *.tga (input)          Truevision TGA.\n"
 
 		  "\n"
 		  "Options:\n"
