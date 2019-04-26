@@ -1,4 +1,4 @@
-' Copyright (c) 2015-2018 Bruce A Henderson
+' Copyright (c) 2015-2019 Bruce A Henderson
 ' All rights reserved.
 ' 
 ' Redistribution and use in source and binary forms, with or without
@@ -26,6 +26,8 @@ SuperStrict
 
 Import "source.bmx"
 
+Import brl.quaternion
+
 ?win32
 Import "-lpsapi"
 ?
@@ -35,9 +37,9 @@ Extern
 	Function bmx_bx_mtxIdentity(result:Float Ptr)
 	Function bmx_bx_mtxTranslate(result:Float Ptr, tx:Float, ty:Float, tz:Float)
 	Function bmx_bx_mtxScale(result:Float Ptr, sx:Float, sy:Float, sz:Float)
-	Function bmx_bx_mtxQuat(result:Float Ptr, quat:Float Ptr)
-	Function bmx_bx_mtxQuatTranslation(result:Float Ptr, quat:Float Ptr, translation:Float Ptr)
-	Function bmx_bx_mtxQuatTranslationHMD(result:Float Ptr, quat:Float Ptr, translation:Float Ptr)
+	Function bmx_bx_mtxQuat(result:Float Ptr, Quat:SQuatF Var)
+	Function bmx_bx_mtxQuatTranslation(result:Float Ptr, Quat:SQuatF Var, Translation:SVec3F Var)
+	Function bmx_bx_mtxQuatTranslationHMD(result:Float Ptr, Quat:SQuatF Var, Translation:SVec3F Var)
 	Function bmx_bx_mtxLookAt(result:Float Ptr, eye:Float Ptr, at:Float Ptr, up:Float Ptr)
 	'Function bmx_bx_mtxProjXYWH(result:Float Ptr, x:Float, y:Float, width:Float, height:Float, near:Float, far:Float, oglNdc:Int)
 	Function bmx_bx_mtxProj(result:Float Ptr, ut:Float, dt:Float, lt:Float, rt:Float, near:Float, far:Float, oglNdc:Int)

@@ -1,4 +1,4 @@
-' Copyright (c) 2015-2018 Bruce A Henderson
+' Copyright (c) 2015-2019 Bruce A Henderson
 ' All rights reserved.
 ' 
 ' Redistribution and use in source and binary forms, with or without
@@ -80,21 +80,21 @@ End Function
 Rem
 bbdoc: 
 End Rem
-Function mtxQuat(result:Float Ptr, quatVec4:Float Ptr)
+Function mtxQuat(result:Float Ptr, quatVec4:SQuatF)
 	bmx_bx_mtxQuat(result, quatVec4)
 End Function
 
 Rem
 bbdoc: 
 End Rem
-Function mtxQuatTranslation(result:Float Ptr, quatVec4:Float Ptr, translationVec3:Float Ptr)
+Function mtxQuatTranslation(result:Float Ptr, quatVec4:SQuatF, translationVec3:SVec3F)
 	bmx_bx_mtxQuatTranslation(result, quatVec4, translationVec3)
 End Function
 
 Rem
 bbdoc: 
 End Rem
-Function mtxQuatTranslationHMD(result:Float Ptr, quatVec4:Float Ptr, translationVec3:Float Ptr)
+Function mtxQuatTranslationHMD(result:Float Ptr, quatVec4:SQuatF, translationVec3:SVec3F)
 	bmx_bx_mtxQuatTranslationHMD(result, quatVec4, translationVec3)
 End Function
 

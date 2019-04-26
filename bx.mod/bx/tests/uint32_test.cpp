@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 Branimir Karadzic. All rights reserved.
+ * Copyright 2010-2019 Branimir Karadzic. All rights reserved.
  * License: https://github.com/bkaradzic/bx#license-bsd-2-clause
  */
 
@@ -14,11 +14,18 @@ TEST_CASE("StrideAlign")
 		REQUIRE(12 == bx::strideAlign(ii+1, 12) );
 	}
 
-	REQUIRE(0  == bx::strideAlign16(0, 12) );
+	REQUIRE(0  == bx::strideAlign<16>(0, 12) );
 	for (uint32_t ii = 0; ii < 12; ++ii)
 	{
-		REQUIRE(48 == bx::strideAlign16(ii+1, 12) );
+		REQUIRE(48 == bx::strideAlign<16>(ii+1, 12) );
 	}
+
+	uint32_t offset = 11;
+	offset = bx::strideAlign(offset, 32);
+	REQUIRE(offset == 32);
+
+	offset = bx::strideAlign(offset, 24);
+	REQUIRE(offset == 48);
 }
 
 TEST_CASE("uint32_cnt")

@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2015-2018 Bruce A Henderson
+  Copyright (c) 2015-2019 Bruce A Henderson
   All rights reserved.
 
   Redistribution and use in source and binary forms, with or without
@@ -31,9 +31,9 @@ extern "C" {
 	void bmx_bx_mtxIdentity(float * result);
 	void bmx_bx_mtxTranslate(float * result, float tx, float ty, float tz);
 	void bmx_bx_mtxScale(float * result, float sx, float sy, float sz);
-	void bmx_bx_mtxQuat(float * result, float * quat);
-	void bmx_bx_mtxQuatTranslation(float * result, float * quat, float * translation);
-	void bmx_bx_mtxQuatTranslationHMD(float * result, float * quat, float * translation);
+	void bmx_bx_mtxQuat(float * result, bx::Quaternion * quat);
+	void bmx_bx_mtxQuatTranslation(float * result, bx::Quaternion * quat, bx::Vec3 * translation);
+	void bmx_bx_mtxQuatTranslationHMD(float * result, bx::Quaternion * quat, bx::Vec3 * translation);
 	void bmx_bx_mtxLookAt(float * result, float * eye, float * at, float * up);
 	//void bmx_bx_mtxProjXYWH(float * result, float x, float y, float width, float height, float near, float far, int oglNdc);
 	void bmx_bx_mtxProj(float * result, float ut, float dt, float lt, float rt, float near, float far, int oglNdc);
@@ -62,16 +62,16 @@ void bmx_bx_mtxScale(float * result, float sx, float sy, float sz) {
 	bx::mtxScale(result, sx, sy, sz);
 }
 
-void bmx_bx_mtxQuat(float * result, float * quat) {
-	bx::mtxQuat(result, quat);
+void bmx_bx_mtxQuat(float * result, bx::Quaternion * quat) {
+	bx::mtxQuat(result, *quat);
 }
 
-void bmx_bx_mtxQuatTranslation(float * result, float * quat, float * translation) {
-	bx::mtxQuatTranslation(result, quat, translation);
+void bmx_bx_mtxQuatTranslation(float * result, bx::Quaternion * quat, bx::Vec3 * translation) {
+	bx::mtxQuatTranslation(result, *quat, *translation);
 }
 
-void bmx_bx_mtxQuatTranslationHMD(float * result, float * quat, float * translation) {
-	bx::mtxQuatTranslationHMD(result, quat, translation);
+void bmx_bx_mtxQuatTranslationHMD(float * result, bx::Quaternion * quat, bx::Vec3 * translation) {
+	bx::mtxQuatTranslationHMD(result, *quat, *translation);
 }
 
 void bmx_bx_mtxLookAt(float * result, float * eye, float * at, float * up) {
