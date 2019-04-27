@@ -54,7 +54,6 @@ Extern
 	Function bbGfxGraphicsShareContexts()
 	Function bbGfxGraphicsGraphicsModes:Int( display:Int, buf:Byte Ptr, size:Int )
 	Function bbGfxGraphicsAttachGraphics:Byte Ptr( widget:Byte Ptr,flags:Int )
-	Function bbGfxGraphicsCreateGraphics:Byte Ptr( width:Int, height:Int, depth:Int, hertz:Int, flags:Int )
 	Function bbGfxGraphicsGetSettings( context:Byte Ptr, width:Int Var, height:Int Var, depth:Int Var, hertz:Int Var, flags:Int Var )
 	Function bbGfxGraphicsClose( context:Byte Ptr )	
 	Function bbGfxGraphicsSetGraphics( context:Byte Ptr )

@@ -68,7 +68,6 @@ void bbGfxGraphicsClose( BBGfxContext *context );
 void bmx_SDL_Poll();
 void bmx_SDL_WaitEvent();
 void * bbSDLGraphicsGetHandle(BBGfxContext *context);
-BBGfxContext *bbGfxGraphicsCreateGraphics( int width,int height,int depth,int hz,int flags );
 void bbGfxGraphicsCls();
 void bbGfxSetPlatformData(SDL_Window * window);
 
@@ -98,7 +97,6 @@ static void * bbGfxGetWindowHandle(SDL_Window * window) {
 	if (!SDL_GetWindowWMInfo(window, &wmi) ) {
 		return NULL;
 	}
-
 #if BX_PLATFORM_LINUX || BX_PLATFORM_BSD
 #if ENTRY_CONFIG_USE_WAYLAND
 	wl_egl_window *win_impl = (wl_egl_window*)SDL_GetWindowData(window, "wl_egl_window");
@@ -125,110 +123,26 @@ static void * bbGfxGetWindowHandle(SDL_Window * window) {
 #endif // BX_PLATFORM_
 }
 
-BBGfxContext *bbGfxGraphicsCreateGraphics( int width,int height,int depth,int hz,int flags ) {
-
-	int mode;
-	char * appTitle = bbStringToUTF8String( bbAppTitle );
-	
-	int windowFlags = 0;
-
-//	if ((flags & FLAGS_DX) == 0) {
-//		windowFlags = SDL_WINDOW_OPENGL;
-//	}
-	
-	if (flags & FLAGS_BORDERLESS) windowFlags |= SDL_WINDOW_BORDERLESS;
-	
-	if( depth ){
-		windowFlags |= SDL_WINDOW_FULLSCREEN;
-		mode=MODE_DISPLAY;
-	} else {
-		if (flags & FLAGS_FULLSCREEN) {
-			windowFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-		}
-		mode=MODE_WINDOW;
-	}
-/*
-	if ((flags & FLAGS_DX) == 0) {
-		if (flags & FLAGS_BACKBUFFER) SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-		if (flags & FLAGS_ALPHABUFFER) SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 1);
-		if (flags & FLAGS_DEPTHBUFFER) SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-		if (flags & FLAGS_STENCILBUFFER) SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 1);
-	}
-*/
-	SDL_Window *window = SDL_CreateWindow(appTitle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		width, height, windowFlags | SDL_WINDOW_ALLOW_HIGHDPI);
-		
-	if (window == NULL) {
-printf("error... %s\n", SDL_GetError());fflush(stdout);
-		return NULL;
-	}
-
-	//SDL_GLContext context = 0;
-	
-//	if ((flags & FLAGS_DX) == 0) {
-	//	SDL_GL_SetSwapInterval(-1);
-	//
-		//context = SDL_GL_CreateContext(window);
-	//}
-
-	BBGfxContext *bbcontext=(BBGfxContext*)malloc( sizeof(BBGfxContext) );
-	memset( bbcontext,0,sizeof(BBGfxContext) );
-	bbcontext->mode=mode;	
-	bbcontext->width=width;	
-	bbcontext->height=height;
-#ifdef __RASPBERRYPI__
-	bbcontext->depth=16;
-#else
-	bbcontext->depth=24;	
-#endif
-	bbcontext->hertz=hz;
-	bbcontext->flags=flags;
-	bbcontext->sync=-1;	
-	bbcontext->window=window;
-	//bbcontext->context=context;
-	SDL_GetWindowWMInfo(window, &bbcontext->info);
-
-printf("HAH\n");fflush(stdout);
-	bgfx_platform_data_t pd;
-#if BX_PLATFORM_LINUX || BX_PLATFORM_BSD
-#if ENTRY_CONFIG_USE_WAYLAND
-	pd.ndt          = wmi.info.wl.display;
-#else
-	pd.ndt          = wmi.info.x11.display;
-#endif
-#elif BX_PLATFORM_OSX
-	pd.ndt          = NULL;
-#elif BX_PLATFORM_WINDOWS
-	pd.ndt          = NULL;
-#elif BX_PLATFORM_STEAMLINK
-	pd.ndt          = wmi.info.vivante.display;
-#endif // BX_PLATFORM_
-	pd.nwh          = bbGfxGetWindowHandle(window);
-	pd.context      = NULL;
-	pd.backBuffer   = NULL;
-	pd.backBufferDS = NULL;
-	bgfx_set_platform_data(&pd);
-
-	return bbcontext;
-}
-
 void bbGfxSetPlatformData(SDL_Window * window) {
 	SDL_SysWMinfo info;
-	SDL_GetWindowWMInfo(window, &info);
+	SDL_VERSION(&info.version);
+	if (!SDL_GetWindowWMInfo(window, &info)) {
+		bbExThrow("Error getting window info");
+	}
 
 	bgfx_platform_data_t pd;
 #if BX_PLATFORM_LINUX || BX_PLATFORM_BSD
 #if ENTRY_CONFIG_USE_WAYLAND
-	pd.ndt          = wmi.info.wl.display;
+	pd.ndt          = info.info.wl.display;
 #else
-	pd.ndt          = wmi.info.x11.display;
+	pd.ndt          = info.info.x11.display;
 #endif
 #elif BX_PLATFORM_OSX
 	pd.ndt          = NULL;
 #elif BX_PLATFORM_WINDOWS
 	pd.ndt          = NULL;
 #elif BX_PLATFORM_STEAMLINK
-	pd.ndt          = wmi.info.vivante.display;
+	pd.ndt          = info.info.vivante.display;
 #endif // BX_PLATFORM_
 	pd.nwh          = bbGfxGetWindowHandle(window);
 	pd.context      = NULL;
@@ -289,7 +203,6 @@ void bbGfxGraphicsGetSettings( BBGfxContext *context, int * width,int * height,i
 }
 
 void bbGfxGraphicsCls() {
-printf("bbGfxGraphicsCls\n");fflush(stdout);
 	bgfx_encoder_t* encoder = bgfx_encoder_begin(true);
 	bgfx_encoder_touch(encoder, 0);
 	bgfx_encoder_end(encoder);
