@@ -71,7 +71,7 @@ Type TGfxGraphics Extends TGraphics
 		Return GfxGraphicsDriver()
 	End Method
 	
-	Method GetSettings:Int( width:Int Var,height:Int Var,depth:Int Var,hertz:Int Var,flags:Int Var )
+	Method GetSettings:Int( width:Int Var,height:Int Var,depth:Int Var,hertz:Int Var,flags:Int Var, x:Int var, y:Int var)
 		Assert _context
 		width=_context.width
 		height=_context.height
@@ -101,6 +101,10 @@ Type TGfxGraphics Extends TGraphics
 
 	Method Resize:Int(width:Int, height:Int)
 		TBGFX.Reset(width, height, BGFX_RESET_VSYNC | BGFX_RESET_HIDPI)
+	End Method
+
+	Method Position:Int(x:Int, y:Int)
+		'
 	End Method
 
 	Field _context:TGraphicsContext
@@ -133,7 +137,7 @@ Type TGfxGraphicsDriver Extends TGraphicsDriver
 		'Return t
 	End Method
 	
-	Method CreateGraphics:TGfxGraphics( width:Int, height:Int, depth:Int, hertz:Int, flags:Int )
+	Method CreateGraphics:TGfxGraphics( width:Int, height:Int, depth:Int, hertz:Int, flags:Int, x:Int, y:Int )
 		Local t:TGfxGraphics=New TGfxGraphics
 		t._context=GfxGraphicsCreateGraphics( width,height,depth,hertz,flags )
 
@@ -271,7 +275,6 @@ End Rem
 	Method CanResize:Int()
 		Return True
 	End Method
-
 End Type
 
 

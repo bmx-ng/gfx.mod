@@ -61,8 +61,8 @@ Type TBGFXMax2DDriver Extends TMax2DDriver
 	'	If g Return TMax2DGraphics.Create( g,Self )
 	End Method
 	
-	Method CreateGraphics:TMax2DGraphics( width:Int, height:Int, depth:Int, hertz:Int, flags:Int )
-		Local g:TGfxGraphics=GfxGraphicsDriver().CreateGraphics( width,height,depth,hertz,flags )
+	Method CreateGraphics:TMax2DGraphics( width:Int, height:Int, depth:Int, hertz:Int, flags:Int, x:Int, y:Int )
+		Local g:TGfxGraphics=GfxGraphicsDriver().CreateGraphics( width,height,depth,hertz,flags, x, y)
 		If g Return TMax2DGraphics.Create( g,Self )
 	End Method
 	
