@@ -71,7 +71,7 @@ Type TGfxGraphics Extends TGraphics
 		Return GfxGraphicsDriver()
 	End Method
 	
-	Method GetSettings:Int( width:Int Var,height:Int Var,depth:Int Var,hertz:Int Var,flags:Int Var, x:Int var, y:Int var)
+	Method GetSettings( width:Int Var,height:Int Var,depth:Int Var,hertz:Int Var,flags:Long Var, x:Int var, y:Int var)
 		Assert _context
 		width=_context.width
 		height=_context.height
@@ -80,8 +80,8 @@ Type TGfxGraphics Extends TGraphics
 		flags=_context.flags
 	End Method
 	
-	Method Close:Int()
-		If Not _context Return 0
+	Method Close()
+		If Not _context Return
 
 		If _currentContext = _context Then
 			_currentContext = Null
@@ -95,15 +95,15 @@ Type TGfxGraphics Extends TGraphics
 
 	Method GetHandle:Byte Ptr()
 		If _context Then
-			Return _context.window.GetWindowHandle()
+			Return _context.window.GetHandle()
 		End If
 	End Method
 
-	Method Resize:Int(width:Int, height:Int)
+	Method Resize(width:Int, height:Int)
 		TBGFX.Reset(width, height, BGFX_RESET_VSYNC | BGFX_RESET_HIDPI)
 	End Method
 
-	Method Position:Int(x:Int, y:Int)
+	Method Position(x:Int, y:Int)
 		'
 	End Method
 
@@ -131,13 +131,13 @@ Type TGfxGraphicsDriver Extends TGraphicsDriver
 		Return modes
 	End Method
 	
-	Method AttachGraphics:TGfxGraphics( widget:Byte Ptr,flags:Int )
+	Method AttachGraphics:TGfxGraphics( widget:Byte Ptr,flags:Long )
 		'Local t:TGfxGraphics=New TGfxGraphics
 		't._context=bbGLGraphicsAttachGraphics( widget,flags )
 		'Return t
 	End Method
 	
-	Method CreateGraphics:TGfxGraphics( width:Int, height:Int, depth:Int, hertz:Int, flags:Int, x:Int, y:Int )
+	Method CreateGraphics:TGfxGraphics( width:Int, height:Int, depth:Int, hertz:Int, flags:Long, x:Int, y:Int )
 		Local t:TGfxGraphics=New TGfxGraphics
 		t._context=GfxGraphicsCreateGraphics( width,height,depth,hertz,flags )
 
@@ -155,7 +155,7 @@ Type TGfxGraphicsDriver Extends TGraphicsDriver
 		Return t
 	End Method
 
-	Method GfxGraphicsCreateGraphics:TGraphicsContext(width:Int,height:Int,depth:Int,hertz:Int,flags:Int)
+	Method GfxGraphicsCreateGraphics:TGraphicsContext(width:Int,height:Int,depth:Int,hertz:Int,flags:Long)
 		Local context:TGraphicsContext = New TGraphicsContext
 
 		Local windowFlags:UInt '= SDL_WINDOW_ALLOW_HIGHDPI
@@ -228,7 +228,7 @@ End Rem
 		Return context
 	End Method
 
-	Method SetGraphics:Int( g:TGraphics )
+	Method SetGraphics( g:TGraphics )
 		Local context:Byte Ptr
 		Local t:TGfxGraphics=TGfxGraphics( g )
 		If t context=t._context
@@ -274,6 +274,11 @@ End Rem
 
 	Method CanResize:Int()
 		Return True
+	End Method
+
+
+	Method ToString:String() Override
+		Return "TGfxGraphicsDriver"
 	End Method
 End Type
 

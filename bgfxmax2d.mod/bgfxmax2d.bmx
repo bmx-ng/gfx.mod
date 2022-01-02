@@ -22,7 +22,7 @@
 ' OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 ' OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 '
-Strict
+SuperStrict
 
 Module gfx.bgfxmax2d
 
@@ -56,12 +56,12 @@ Type TBGFXMax2DDriver Extends TMax2DDriver
 		Return GfxGraphicsDriver().GraphicsModes()
 	End Method
 	
-	Method AttachGraphics:TMax2DGraphics( widget:Byte Ptr,flags:Int )
+	Method AttachGraphics:TMax2DGraphics( widget:Byte Ptr,flags:Long )
 	'	Local g:TGLGraphics=GLGraphicsDriver().AttachGraphics( widget,flags )
 	'	If g Return TMax2DGraphics.Create( g,Self )
 	End Method
 	
-	Method CreateGraphics:TMax2DGraphics( width:Int, height:Int, depth:Int, hertz:Int, flags:Int, x:Int, y:Int )
+	Method CreateGraphics:TMax2DGraphics( width:Int, height:Int, depth:Int, hertz:Int, flags:Long, x:Int, y:Int )
 		Local g:TGfxGraphics=GfxGraphicsDriver().CreateGraphics( width,height,depth,hertz,flags, x, y)
 		If g Return TMax2DGraphics.Create( g,Self )
 	End Method
@@ -83,7 +83,7 @@ Type TBGFXMax2DDriver Extends TMax2DDriver
 		t.MakeCurrent
 	End Method
 
-	Method Flip( sync )
+	Method Flip:Int( sync:Int )
 		GfxGraphicsDriver().Flip sync
 	End Method
 	
